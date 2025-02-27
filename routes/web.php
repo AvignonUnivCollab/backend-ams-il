@@ -15,5 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('dashboard');
-});
+})->name('dashboard');
 
+Route::get('/user', function () {
+    return view('pages.user');
+})->name('pages.user');
