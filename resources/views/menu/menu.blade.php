@@ -13,6 +13,12 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="{{route('pages.user')}}" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-contract menu-icon"></i>
+                <span class="menu-title">Catégories</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
                 <i class="icon-grid-2 menu-icon"></i>
                 <span class="menu-title">Mes vidéos</span>
