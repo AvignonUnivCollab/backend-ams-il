@@ -24,7 +24,6 @@
                         </button>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -32,7 +31,6 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Mes utilisateurs recement connecter</h4>
-                    </p>
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>

@@ -13,7 +13,13 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse" href="{{route('pages.user')}}" aria-expanded="false" aria-controls="ui-basic">
+            <a class="nav-link" data-bs-toggle="collapse" href="{{route('pages.living-room')}}" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-paper menu-icon"></i>
+                <span class="menu-title">Salon</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="{{route('pages.category')}}" aria-expanded="false" aria-controls="ui-basic">
                 <i class="icon-contract menu-icon"></i>
                 <span class="menu-title">Catégories</span>
             </a>

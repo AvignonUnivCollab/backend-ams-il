@@ -20,3 +20,11 @@ Route::get('/', function () {
 Route::get('/user', function () {
     return view('pages.user');
 })->name('pages.user');
+
+Route::get('/category', function () {
+    return view('pages.category');
+})->name('pages.category');
+
+Route::get('/living-room', function () {
+    return view('pages.living-room');
+})->name('pages.living-room');
