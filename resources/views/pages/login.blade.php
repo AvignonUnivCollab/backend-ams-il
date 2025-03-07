@@ -31,15 +31,33 @@
                         </div>
                         <h4>Déjà de retour?</h4>
                         <h6 class="font-weight-light">C'est facile de se connecter. Il suffit de remplir les champs suivants</h6>
-                        <form class="pt-3">
+                        <form class="pt-3" action="{{ route('users.login') }}" method="POST">
+                            @csrf
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Username">
+                                <input
+                                    type="text"
+                                    name="username"
+                                    class="form-control @error('username') is-invalid @enderror"
+                                    placeholder="Username"
+                                    required value="{{ old('username') }}">
+                                @error('username')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="form-group">
-                                <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    class="form-control @error('password') is-invalid @enderror"
+                                    placeholder="Mot de passe" required>
+                                @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="mt-3 d-grid gap-2">
-                                <a class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" href="#">Se connecter</a>
+                                <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">Se connecter</button>
                             </div>
                             <div class="text-center mt-4 font-weight-light"> Vous n'avez pas de compte ? <a href="{{ route('pages.register') }}" class="text-primary">S'enregistrer</a>
                             </div>

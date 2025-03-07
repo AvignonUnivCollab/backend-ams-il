@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -11,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
+*/
+
+/*
+ |
+ | LINK WEB PAGES
+ |
 */
 
 Route::get('/', function () {
@@ -36,3 +44,17 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('pages.register');
 })->name('pages.register');
+
+
+/*
+ |
+ | Controllers
+ |
+*/
+
+Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+Route::put('/rooms/{id}', [RoomController::class, 'update'])->name('rooms.update');
+
+//Users
+Route::post('/register', [UserController::class, 'store'])->name('users.store');
+Route::post('/login', [UserController::class, 'login'])->name('users.login');

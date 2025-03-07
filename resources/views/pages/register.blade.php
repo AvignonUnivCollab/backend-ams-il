@@ -20,6 +20,16 @@
     <link rel="shortcut icon" href="../../assets/images/favicon.png" />
 </head>
 <body>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="container-scroller">
     <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper d-flex align-items-center auth px-0">
@@ -31,22 +41,63 @@
                         </div>
                         <h4>Vous etes nouveau ?</h4>
                         <h6 class="font-weight-light">S'enregistrer c'est facile. Remplissez juste les champs suivants</h6>
-                        <form class="pt-3">
+                        <form class="pt-3" action="{{ route('users.store') }}" method="POST">
+                            @csrf
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Username">
+                                <input
+                                    type="text"
+                                    name="name"
+                                    class="form-control form-control-lg @error('name') is-invalid @enderror"
+                                    placeholder="Name" required value="{{ old('name') }}">
+                                @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="form-group">
-                                <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Email">
+                                <input
+                                    type="text"
+                                    name="username"
+                                    class="form-control form-control-lg @error('username') is-invalid @enderror"
+                                    placeholder="Username" required value="{{ old('username') }}">
+                                @error('username')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="form-group">
-                                <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    class="form-control form-control-lg @error('email') is-invalid @enderror"
+                                    placeholder="Email" required value="{{ old('email') }}">
+                                @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
+                            <div class="form-group">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    class="form-control form-control-lg @error('password') is-invalid @enderror"
+                                    placeholder="Password" required>
+                                @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <div class="mt-3 d-grid gap-2">
-                                <a class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" href="#">S'enregistrer</a>
+                                <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">
+                                    S'enregistrer
+                                </button>
                             </div>
-                            <div class="text-center mt-4 font-weight-light"> Vous avez déjà un compte ? <a href="{{ route('pages.login') }}" class="text-primary">Se connecter</a>
+
+                            <div class="text-center mt-4 font-weight-light">
+                                Vous avez déjà un compte ? <a href="{{ route('pages.login') }}" class="text-primary">Se connecter</a>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
