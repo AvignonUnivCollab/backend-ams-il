@@ -28,3 +28,11 @@ Route::get('/category', function () {
 Route::get('/living-room', function () {
     return view('pages.living-room');
 })->name('pages.living-room');
+
+Route::get('/login', function () {
+    return view('pages.login');
+})->name('pages.login');
+
+Route::get('/register', function () {
+    return view('pages.register');
+})->name('pages.register');

@@ -38,7 +38,9 @@
                         <div class="position-relative">
                             <img src="https://picsum.photos/200/300?random={{$film}}" class="card-img-top card-img-custom" alt="Film {{ $film }}">
                             <div class="play-icon">
-                                <i class="bi bi-play-circle-fill"></i>
+                                <button type="button" class="btn btn-primary btn-rounded btn-icon">
+                                    <i class="fas fa-play"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="card-body text-left">
@@ -47,6 +49,11 @@
                             <p>
                                 <i>il y'a {{ $film * 5 }} minutes • {{ $nbVideos }} vidéos • {{ $nbVues }} vues</i>
                             </p>
+                        </div>
+
+                        <!-- Icône de modification -->
+                        <div class="edit-icon">
+                            <i class="bi bi-pencil-fill"></i>
                         </div>
                     </div>
                 </div>
@@ -66,6 +73,16 @@
                 <div class="modal-body">
                     <form>
                         @csrf
+                        <div class="form-group mb-3">
+                            <label>Image de fond</label>
+                            <input type="file" name="img[]" class="file-upload-default">
+                            <div class="input-group col-xs-12 d-flex align-items-center">
+                                <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+                                <span class="input-group-append ms-2">
+                            <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
+                          </span>
+                            </div>
+                        </div>
                         <div class="mb-3">
                             <label for="nomSalon" class="form-label">Nom du salon</label>
                             <input type="text" class="form-control" id="nomSalon" name="nom" required>
@@ -73,10 +90,6 @@
                         <div class="mb-3">
                             <label for="descriptionSalon" class="form-label">Description</label>
                             <textarea class="form-control" id="descriptionSalon" name="description" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="nbVideos" class="form-label">Nombre de vidéos</label>
-                            <input type="number" class="form-control" id="nbVideos" name="nb_videos" min="1" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Enregistrer</button>
                     </form>
@@ -104,15 +117,8 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 50px;
-            color: rgba(255, 255, 255, 0.8);
-            background: rgba(0, 0, 0, 0.5);
             border-radius: 50%;
             padding: 10px;
-        }
-
-        .play-icon:hover {
-            color: rgba(255, 255, 255, 1);
-            background: rgba(0, 0, 0, 0.7);
         }
 
         .card {
@@ -134,5 +140,35 @@
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
         }
+
+        .card-body i {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .edit-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white; /* L'icône reste blanche */
+            padding: 8px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: none; /* Caché par défaut */
+            transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .card:hover .edit-icon {
+            display: block; /* Afficher au survol */
+            transform: scale(1.1); /* Léger zoom */
+        }
+
+        .edit-icon:hover {
+            background: rgba(0, 0, 0, 0.8);
+            color: white; /* S'assurer que l'icône reste blanche même au survol */
+        }
+
     </style>
 @endsection

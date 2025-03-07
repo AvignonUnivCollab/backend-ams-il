@@ -21,16 +21,21 @@
     <!-- inject:css -->
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
-    <link rel="shortcut icon" href="assets/images/favicon.png" />
+    <link rel="shortcut icon" href="assets/images/favicon.png"/>
 </head>
 <body>
 <div class="container-scroller">
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-            <a class="navbar-brand brand-logo me-5" href="index.html"><img src="assets/images/logo.svg" class="me-2" alt="logo" /></a>
-            <a class="navbar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
+            <a class="navbar-brand brand-logo me-5" href="index.html"><img src="assets/images/logo.svg" class="me-2"
+                                                                           alt="logo"/></a>
+            <a class="navbar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg"
+                                                                           alt="logo"/></a>
         </div>
+
+        <a href="{{ route('pages.login') }}" class="btn btn-inverse-danger btn-fw mr-4">Se déconnecter</a>
+
     </nav>
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
@@ -48,7 +53,8 @@
             <footer class="footer">
                 <div class="d-sm-flex justify-content-center justify-content-sm-between">
                     <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">&copy; {{ date('Y') }}. Tous droits réservé à Moi</span>
-                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Fais par Lionel NKEOUA <i class="ti-heart text-danger ms-1"></i></span>
+                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Fais par Lionel NKEOUA <i
+                            class="ti-heart text-danger ms-1"></i></span>
                 </div>
             </footer>
             <!-- partial -->
@@ -74,6 +80,9 @@
 <script src="dashboard/assets/js/settings.js"></script>
 <script src="dashboard/assets/js/todolist.js"></script>
 <!-- endinject -->
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <!-- Custom js for this page-->
 <script src="dashboard/assets/js/jquery.cookie.js" type="text/javascript"></script>
 <script src="dashboard/assets/js/dashboard.js"></script>
