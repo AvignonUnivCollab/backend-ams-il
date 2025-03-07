@@ -8,4 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class VideoRoom extends Model
 {
     use HasFactory;
+
+    protected $table = 'video_room';
+    protected $fillable = [
+        'video_id',
+        'room_id',
+    ];
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
+
+    public function video()
+    {
+        return $this->belongsTo(Video::class);
+    }
 }

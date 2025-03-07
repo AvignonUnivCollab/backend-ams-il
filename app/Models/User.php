@@ -42,4 +42,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function rooms() {
+        return $this->hasMany(Room::class, 'host_id');
+    }
+
+    public function messages() {
+        return $this->hasMany(Message::class);
+    }
+
+    public function joinedRooms() {
+        return $this->belongsToMany(Room::class, 'user_room')->withPivot('role')->withTimestamps();
+    }
 }
