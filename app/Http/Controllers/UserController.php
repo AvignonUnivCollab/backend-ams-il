@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -14,8 +15,12 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = DB::table('users')->orderByDesc('created_at')->get();
-        return view('users.index', compact('users'));
+        $users = DB::table('users')->orderByDesc('created_at')->get()->map(function ($user) {
+            $user->days_since_creation = Carbon::parse($user->created_at)->diffInDays(Carbon::now());
+            return $user;
+        });
+
+        return view('pages.user', compact('users'));
     }
 
 
@@ -50,7 +55,7 @@ class UserController extends Controller
         ]);
 
 
-        return redirect()->route('pages.login')->with('success', 'Inscription réussie ! Connectez-vous.');
+        return redirect()->route('pages.user')->with('success', 'Utilisateur crée avec success');
     }
 
 
@@ -66,11 +71,11 @@ class UserController extends Controller
 
         $user = null;
         if ($data) {
-            $user = new User((array) $data);
+            $user = new User((array)$data);
             $user->exists = true; // Indique que l'utilisateur existe en base
         }
 
-        if($user && Hash::check($request->password, $user->password)) {
+        if ($user && Hash::check($request->password, $user->password)) {
             //Authentification reussie
             Auth::login($user);
             return redirect()->route('dashboard')->with('success', 'Connection réussie !.');
@@ -81,13 +86,14 @@ class UserController extends Controller
         ])->withInput();
     }
 
-    public function joinRoom(Request $request, $roomId) {
+    public function joinRoom(Request $request, $roomId)
+    {
 
         $user = auth::user();
         $room = Room::findOrFail($roomId);
 
         //Na pas deja join
-        if(!$user->rooms()->where('room_id', $roomId)->exists()) {
+        if (!$user->rooms()->where('room_id', $roomId)->exists()) {
             $user->rooms()->attach($room->id, ['role' => 'membre']);
         }
 

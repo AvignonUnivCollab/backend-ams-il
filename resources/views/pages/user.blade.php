@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 d-flex justify-content-end">
-                        <button type="button" class="btn btn-outline-primary btn-icon-text">
+                        <button type="button" class="btn btn-outline-primary btn-icon-text" data-bs-toggle="modal" data-bs-target="#addUserModal">
                             <i class="ti-plus btn-icon-prepend"></i> Ajouter
                         </button>
                     </div>
@@ -35,76 +35,30 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
-                                <th>Nom</th>
-                                <th>Prenom</th>
+                                <th>Name</th>
+                                <th>Username</th>
                                 <th>Email</th>
-                                <th>Date</th>
+                                <th>Membre depuis</th>
                                 <th>Visionnage/Mois passé</th>
                                 <th>Modifier</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>Jacob</td>
-                                <td>Photoshop</td>
-                                <td>nleou@gmail.com</td>
-                                <td>il y'a 1 jour</td>
-                                <td class="text-danger"> 28.76% <i class="ti-arrow-down"></i></td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-primary btn-sm">
-                                        Modifier
-                                    </button>
-                                </td>
-                            </tr>
+                                @foreach($users as $user)
 
-                            <tr>
-                                <td>Messsy</td>
-                                <td>Flash</td>
-                                <td>yyyyre@gmail.com</td>
-                                <td>il y'a 2 semaines</td>
-                                <td class="text-danger"> 21.06% <i class="ti-arrow-down"></i></td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-primary btn-sm">
-                                        Modifier
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>John</td>
-                                <td>Premier</td>
-                                <td>nleou@gmail.com</td>
-                                <td>il y'a 1 mois</td>
-                                <td class="text-danger"> 35.00% <i class="ti-arrow-down"></i></td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-primary btn-sm">
-                                        Modifier
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Peter</td>
-                                <td>After effects</td>
-                                <td>nleou@gmail.com</td>
-                                <td>il y'a 1 mois</td>
-                                <td class="text-success"> 82.00% <i class="ti-arrow-up"></i></td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-primary btn-sm">
-                                        Modifier
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Dave</td>
-                                <td>53275535</td>
-                                <td>nleou@gmail.com</td>
-                                <td>il y'a 1 mois</td>
-                                <td class="text-success"> 98.05% <i class="ti-arrow-up"></i></td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-primary btn-sm">
-                                        Modifier
-                                    </button>
-                                </td>
-                            </tr>
+                                    <tr>
+                                        <td>{{$user->name}}</td>
+                                        <td>{{$user->username}}</td>
+                                        <td>{{$user->email}}</td>
+                                        <td>{{$user->days_since_creation }} jour(s)</td>
+                                        <td class="text-danger"> 28.76% <i class="ti-arrow-down"></i></td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-primary btn-sm">
+                                                Modifier
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -112,4 +66,93 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addSalonModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSalonModalLabel">Ajouter un utilisateur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form class="pt-3" action="{{ route('users.store') }}" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <label
+                                for="name"
+                                class="form-label">Nom</label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                class="form-control form-control-lg @error('name') is-invalid @enderror"
+                                placeholder="Name" required value="{{ old('name') }}">
+                            @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label
+                                for="username"
+                                class="form-label">Username</label>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                class="form-control form-control-lg @error('username') is-invalid @enderror"
+                                placeholder="Username" required value="{{ old('username') }}">
+                            @error('username')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label
+                                for="email"
+                                class="form-label">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-control form-control-lg @error('email') is-invalid @enderror"
+                                placeholder="Email" required value="{{ old('email') }}">
+                            @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label
+                                for="password"
+                                class="form-label">Password</label>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                class="form-control form-control-lg @error('password') is-invalid @enderror"
+                                placeholder="Password" required>
+                            @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mt-3 d-grid gap-2">
+                            <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">
+                                S'enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection

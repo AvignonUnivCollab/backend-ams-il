@@ -21,13 +21,12 @@ use Illuminate\Support\Facades\Route;
  |
 */
 
+
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
 
-Route::get('/user', function () {
-    return view('pages.user');
-})->name('pages.user');
+Route::get('/users', [UserController::class, 'index'])->name('pages.user');
 
 Route::get('/category', function () {
     return view('pages.category');
@@ -56,5 +55,5 @@ Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
 Route::put('/rooms/{id}', [RoomController::class, 'update'])->name('rooms.update');
 
 //Users
-Route::post('/register', [UserController::class, 'store'])->name('users.store');
+Route::post('/users', [UserController::class, 'store'])->name('users.store');
 Route::post('/login', [UserController::class, 'login'])->name('users.login');
