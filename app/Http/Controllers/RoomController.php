@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class RoomController extends Controller
@@ -13,8 +14,20 @@ class RoomController extends Controller
 
     public function index()
     {
-        $rooms = Room::all();
-        return view('room.index', compact('rooms'));
+        $rooms = DB::table('rooms')
+            ->leftJoin('room_video', 'rooms.id', '=', 'room_video.room_id')
+            ->leftJoin('videos', 'room_video.video_id', '=', 'videos.id')
+            ->select(
+                'rooms.id',
+                'rooms.name',
+                'rooms.description',
+                DB::raw('COUNT(DISTINCT videos.id) as video_count'),
+                DB::raw('COALESCE(SUM(videos.duration), 0) as total_duration'),
+            )
+            ->groupBy('rooms.id', 'rooms.name', 'rooms.description')
+            ->get();
+
+        return view('pages.living-room', compact('rooms'));
     }
 
     public function show($id)
@@ -38,19 +51,26 @@ class RoomController extends Controller
 
         $thumbnailPath = null;
         if ($request->hasFile('thumbnail')) {
-            $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+            $file = $request->file('thumbnail');
+
+            // Générer un nom unique basé sur le timestamp
+            $timestamp = now()->format('Ymd_His');
+            $extension = $file->getClientOriginalExtension(); // Récupère l'extension
+            $filename = "image_{$timestamp}." . $extension;
+
+            $thumbnailPath = $file->storeAs('images', $filename, 'public');
         }
 
-        Room::created([
+        DB::table('rooms')->insert([
             'name' => $request->name,
             'description' => $request->description,
             'thumbnail' => $thumbnailPath,
-            'host_id' => Auth::user()->id,
+            'host_id' => 1,
             'current_video_id' => null,
             'is_playing' => false,
         ]);
 
-        return redirect()->route('room.index');
+        return redirect()->route('pages.living-room')->with('success', 'Room crée avec success');
     }
 
     public function update(Request $request, $roomId) {

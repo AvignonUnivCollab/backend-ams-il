@@ -39,6 +39,7 @@
                                 <th>Username</th>
                                 <th>Email</th>
                                 <th>Membre depuis</th>
+                                <th>dernière connection</th>
                                 <th>Visionnage/Mois passé</th>
                                 <th>Modifier</th>
                             </tr>
@@ -51,9 +52,11 @@
                                         <td>{{$user->username}}</td>
                                         <td>{{$user->email}}</td>
                                         <td>{{$user->days_since_creation }} jour(s)</td>
+                                        <td>{{$user->days_last_connection }} jour(s)</td>
                                         <td class="text-danger"> 28.76% <i class="ti-arrow-down"></i></td>
                                         <td>
-                                            <button type="button" class="btn btn-outline-primary btn-sm">
+                                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#updateUserModal-{{ $user->id }}">
                                                 Modifier
                                             </button>
                                         </td>
@@ -68,12 +71,12 @@
     </div>
 
 
-    <!-- Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addSalonModalLabel" aria-hidden="true">
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addSalonModalLabel">Ajouter un utilisateur</h5>
+                    <h5 class="modal-title" id="addUserModal">Ajouter un utilisateur</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -155,4 +158,54 @@
         </div>
     </div>
 
+
+    <!-- Update User Modal -->
+    @foreach($users as $user)
+        <div class="modal fade" id="updateUserModal-{{ $user->id }}" tabindex="-1" aria-labelledby="updateUserModalLabel-{{ $user->id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modifier l'utilisateur</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('users.update', $user->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="mb-4">
+                                <label for="name-{{ $user->id }}" class="form-label">Nom</label>
+                                <input type="text" id="name-{{ $user->id }}" name="name" class="form-control" value="{{ $user->name }}" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="username-{{ $user->id }}" class="form-label">Username</label>
+                                <input type="text" id="username-{{ $user->id }}" name="username" class="form-control" value="{{ $user->username }}" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="email-{{ $user->id }}" class="form-label">Email</label>
+                                <input type="email" id="email-{{ $user->id }}" name="email" class="form-control" value="{{ $user->email }}" required>
+                            </div>
+
+                            <div class="mt-3 d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">Modifier</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
 @endsection
+
+<script>
+    function populateModal(user) {
+        document.getElementById('updateUserModal').querySelector('#user_id').value = user.id;
+        document.getElementById('updateUserModal').querySelector('#update_username').value = user.username;
+        document.getElementById('updateUserModal').querySelector('#update_email').value = user.email;
+    }
+
+</script>
+

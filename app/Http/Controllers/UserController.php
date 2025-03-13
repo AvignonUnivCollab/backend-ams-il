@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Room;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,17 +18,11 @@ class UserController extends Controller
     {
         $users = DB::table('users')->orderByDesc('created_at')->get()->map(function ($user) {
             $user->days_since_creation = Carbon::parse($user->created_at)->diffInDays(Carbon::now());
+            $user->days_last_connection = Carbon::parse($user->updated_at)->diffInDays(Carbon::now());
             return $user;
         });
 
         return view('pages.user', compact('users'));
-    }
-
-
-    public function show($id)
-    {
-        $user = DB::table('users')->where('id', $id)->first();
-        return view('users.show', compact('user'));
     }
 
 
@@ -59,6 +54,36 @@ class UserController extends Controller
     }
 
 
+    public function edit($id)
+    {
+        $data = DB::table('users')
+            ->where('id', $id);
+
+        $user = new User((array)$data);
+        return view('pages.user', compact('user'));
+    }
+
+    public function update(Request $request, $id) {
+
+        $request->validate([
+            'name' => 'required|string|max:50',
+            'username' => 'required|string|max:50|unique:users,username,' . $id,
+            'email' => 'required|string|email|max:50|unique:users,email,' . $id,
+        ]);
+
+        DB::table('users')
+            ->where('id', $id)
+            ->update([
+                'name' => $request->name,
+                'username' => $request->username,
+                'email' => $request->email,
+                'updated_at' => now()
+            ]);
+
+        return redirect()->route('pages.user')->with('success', 'Utilisateur modifier avec success');
+    }
+
+
     public function login(Request $request)
     {
         $request->validate([
@@ -72,12 +97,22 @@ class UserController extends Controller
         $user = null;
         if ($data) {
             $user = new User((array)$data);
-            $user->exists = true; // Indique que l'utilisateur existe en base
+            $user->exists = true;
         }
 
         if ($user && Hash::check($request->password, $user->password)) {
             //Authentification reussie
             Auth::login($user);
+
+            DB::table('users')->update([
+                'name' => $request->name,
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             return redirect()->route('dashboard')->with('success', 'Connection réussie !.');
         }
 
@@ -86,6 +121,10 @@ class UserController extends Controller
         ])->withInput();
     }
 
+
+    public function logout() {
+        Auth::logout();
+    }
     public function joinRoom(Request $request, $roomId)
     {
 

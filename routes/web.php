@@ -26,15 +26,11 @@ Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
 
-Route::get('/users', [UserController::class, 'index'])->name('pages.user');
 
 Route::get('/category', function () {
     return view('pages.category');
 })->name('pages.category');
 
-Route::get('/living-room', function () {
-    return view('pages.living-room');
-})->name('pages.living-room');
 
 Route::get('/login', function () {
     return view('pages.login');
@@ -51,9 +47,16 @@ Route::get('/register', function () {
  |
 */
 
-Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
-Route::put('/rooms/{id}', [RoomController::class, 'update'])->name('rooms.update');
+//Rooms
+Route::get('/living-room', [RoomController::class, 'index'])->name('pages.living-room');
+Route::post('/living-room', [RoomController::class, 'store'])->name('living-room.store');
+Route::put('/living-room/{id}', [RoomController::class, 'update'])->name('rooms.update');
+
+//Auth
+Route::post('/login', [UserController::class, 'login'])->name('users.login');
 
 //Users
 Route::post('/users', [UserController::class, 'store'])->name('users.store');
-Route::post('/login', [UserController::class, 'login'])->name('users.login');
+Route::get('/users', [UserController::class, 'index'])->name('pages.user');
+Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+
