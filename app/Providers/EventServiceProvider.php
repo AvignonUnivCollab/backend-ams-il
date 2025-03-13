@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
@@ -26,6 +28,16 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        parent::boot();
+
+        Event::listen(Authenticated::class, function (Authenticated $event) {
+            DB::table('users')
+                ->where('id', $event->user->id)
+                ->update([
+                    'email_verified_at' => now(),
+                    'updated_at' => now()
+                ]);
+        });
     }
 
     /**

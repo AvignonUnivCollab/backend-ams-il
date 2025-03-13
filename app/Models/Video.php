@@ -27,6 +27,6 @@ class Video extends Model
 
     public function rooms()
     {
-        return $this->belongsToMany(Room::class, 'video_room')->withTimestamps();
+        return $this->belongsToMany(Room::class, 'room_video')->withTimestamps();
     }
 }

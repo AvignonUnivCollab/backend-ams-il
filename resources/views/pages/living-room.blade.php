@@ -15,11 +15,13 @@
                                     <span class="input-group-text" id="search">
                                         <i class="icon-search"></i>
                                     </span>
-                            <input type="text" class="form-control" id="navbar-search-input" placeholder="Rechercher..." aria-label="search" aria-describedby="search">
+                            <input type="text" class="form-control" id="navbar-search-input" placeholder="Rechercher..."
+                                   aria-label="search" aria-describedby="search">
                         </div>
                     </div>
                     <div class="col-md-4 d-flex justify-content-end">
-                        <button type="button" class="btn btn-outline-primary btn-icon-text" data-bs-toggle="modal" data-bs-target="#addSalonModal">
+                        <button type="button" class="btn btn-outline-primary btn-icon-text" data-bs-toggle="modal"
+                                data-bs-target="#addSalonModal">
                             <i class="ti-plus btn-icon-prepend"></i> Ajouter
                         </button>
                     </div>
@@ -27,16 +29,14 @@
             </div>
         </div>
 
-        <div class="row mt-4">
-            @foreach ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as $film)
-                @php
-                    $nbVideos = rand(5, 20);
-                    $nbVues = rand(100, 1000);
-                @endphp
+        <div class="row mt-0">
+            @foreach ($rooms as $room)
+
                 <div class="col-md-3 mt-4">
                     <div class="card">
                         <div class="position-relative">
-                            <img src="https://picsum.photos/200/300?random={{$film}}" class="card-img-top card-img-custom" alt="Film {{ $film }}">
+                            <img src="https://picsum.photos/200/300?random=1"
+                                 class="card-img-top card-img-custom">
                             <div class="play-icon">
                                 <button type="button" class="btn btn-primary btn-rounded btn-icon">
                                     <i class="fas fa-play"></i>
@@ -44,10 +44,10 @@
                             </div>
                         </div>
                         <div class="card-body text-left">
-                            <h5 class="card-title">Salon {{ $film }}</h5>
-                            <p class="card-text">Description rapide du film.</p>
+                            <h5 class="card-title"> {{ $room->name }}</h5>
+                            <p class="card-text"> {{ $room->description }}</p>
                             <p>
-                                <i>il y'a {{ $film * 5 }} minutes • {{ $nbVideos }} vidéos • {{ $nbVues }} vues</i>
+                                <i>il y'a {{ 5 }} minutes • {{ 0}} vidéos • {{ 0 }} vues</i>
                             </p>
                         </div>
 
@@ -71,32 +71,96 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form action="{{ route('living-room.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group mb-3">
                             <label>Image de fond</label>
-                            <input type="file" name="img[]" class="file-upload-default">
+                            <input type="file" name="thumbnail" class="file-upload-default d-none" accept="image/*">
                             <div class="input-group col-xs-12 d-flex align-items-center">
-                                <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+                                <input type="text" class="form-control file-upload-info" placeholder="Upload Image" readonly>
                                 <span class="input-group-append ms-2">
-                            <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
-                          </span>
+                                    <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
+                                    <button class="file-upload-clear btn btn-danger ms-2 d-none" type="button">Supprimer</button>
+                                </span>
                             </div>
                         </div>
+
                         <div class="mb-3">
-                            <label for="nomSalon" class="form-label">Nom du salon</label>
-                            <input type="text" class="form-control" id="nomSalon" name="nom" required>
+                            <label
+                                for="name"
+                                class="form-label">Nom du salon
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="name"
+                                name="name" required>
+                            @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <div class="mb-3">
-                            <label for="descriptionSalon" class="form-label">Description</label>
-                            <textarea class="form-control" id="descriptionSalon" name="description" rows="3" required></textarea>
+                            <label
+                                for="description"
+                                class="form-label">Description
+                            </label>
+                            <textarea
+                                class="form-control"
+                                id="description"
+                                name="description"
+                                rows="3"
+                                required>
+                            </textarea>
+                            @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+
+                        <div class="mt-3 d-grid gap-2">
+                            <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">
+                                S'enregistrer
+                            </button>
+                        </div>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fileInput = document.querySelector(".file-upload-default");
+            const uploadButton = document.querySelector(".file-upload-browse");
+            const fileInfo = document.querySelector(".file-upload-info");
+            const clearButton = document.querySelector(".file-upload-clear");
+
+            uploadButton.addEventListener("click", function () {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener("change", function () {
+                if (fileInput.files.length > 0) {
+
+                    fileInfo.value = fileInput.files[0].name;
+                    clearButton.classList.remove("d-none");
+                    uploadButton.classList.add("d-none");
+                } else {
+                    fileInfo.value = "";
+                    clearButton.classList.add("d-none");
+                }
+            });
+
+            clearButton.addEventListener("click", function () {
+                fileInput.value = "";
+                fileInfo.value = "";
+                clearButton.classList.add("d-none");
+                uploadButton.classList.remove("d-none");
+            });
+        });
+    </script>
 
     <style>
         .card-img-custom {

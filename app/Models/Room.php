@@ -9,7 +9,7 @@ class Room extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'thumbnail', 'host_id'];
+    protected $fillable = ['name', 'description', 'thumbnail', 'host_id', 'current_video_id', 'is_playing'];
 
     public function playlist()
     {
@@ -28,11 +28,16 @@ class Room extends Model
 
     public function videos()
     {
-        return $this->belongsToMany(Video::class, 'video_room')->withTimestamps();
+        return $this->belongsToMany(Video::class, 'room_video')->withTimestamps();
     }
 
     public function host()
     {
         return $this->belongsTo(User::class, 'host_id');
+    }
+
+    public function getTotalViewsAttribute()
+    {
+        return $this->videos()->sum('views');
     }
 }
