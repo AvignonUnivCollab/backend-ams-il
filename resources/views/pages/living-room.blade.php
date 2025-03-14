@@ -35,8 +35,7 @@
                 <div class="col-md-3 mt-4">
                     <div class="card">
                         <div class="position-relative">
-                            <img src="https://picsum.photos/200/300?random=1"
-                                 class="card-img-top card-img-custom">
+                            <img src="{{ asset('storage/' . $room->thumbnail) }}" alt="Image" class="card-img-top card-img-custom">
                             <div class="play-icon">
                                 <button type="button" class="btn btn-primary btn-rounded btn-icon">
                                     <i class="fas fa-play"></i>
@@ -47,13 +46,14 @@
                             <h5 class="card-title"> {{ $room->name }}</h5>
                             <p class="card-text"> {{ $room->description }}</p>
                             <p>
-                                <i>il y'a {{ 5 }} minutes • {{ 0}} vidéos • {{ 0 }} vues</i>
+                                <i> {{ $room->formatted_creation_date  }} • {{ $room->video_count}} vidéos • {{ $room->total_duration }} vues</i>
+                                <span class="host-icon">{{ strtoupper(substr($room->host_name, 0, 2)) }}</span>
                             </p>
                         </div>
 
                         <!-- Icône de modification -->
-                        <div class="edit-icon">
-                            <i class="bi bi-pencil-fill"></i>
+                        <div class="edit-icon" data-bs-toggle="modal" data-bs-target="#updateSalonModal-{{ $room->id }}">
+                            <i class="fas fa-edit text-white-50" style="font-size: 14px;"></i>
                         </div>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
     </div>
 
 
-    <!-- Modal -->
+    <!-- Add Salon Modal -->
     <div class="modal fade" id="addSalonModal" tabindex="-1" aria-labelledby="addSalonModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -128,6 +128,58 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Update User Modal -->
+    @foreach($rooms as $room)
+        <div class="modal fade" id="updateSalonModal-{{ $room->id }}" tabindex="-1" aria-labelledby="updateSalonModalLabel-{{ $room->id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modifier le salon</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('living-room.update', $room->id) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="form-group mb-3">
+                                <label>Image de fond</label>
+                                <input type="file" name="thumbnail" class="file-upload-default d-none" accept="image/*">
+                                <div class="input-group col-xs-12 d-flex align-items-center">
+                                    <input type="text" class="form-control file-upload-info" value="{{ $room->thumbnail }}" readonly>
+                                    <span class="input-group-append ms-2">
+                                    <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
+                                    <button class="file-upload-clear btn btn-danger ms-2 d-none" type="button">Supprimer</button>
+                                </span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="name-{{ $room->id }}" class="form-label">Nom du host</label>
+                                <input type="text" class="form-control" id="name-{{ $room->id }}" name="name" value="{{ $room->host_name }}" disabled>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="name-{{ $room->id }}" class="form-label">Nom du salon</label>
+                                <input type="text" class="form-control" id="name-{{ $room->id }}" name="name" value="{{ $room->name }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description-{{ $room->id }}" class="form-label">Description</label>
+                                <textarea class="form-control" id="description-{{ $room->id }}" name="description" rows="3" required>{{ $room->description }}</textarea>
+                            </div>
+
+                            <div class="mt-3 d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">Modifier</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 
 
     <script>
@@ -232,6 +284,23 @@
         .edit-icon:hover {
             background: rgba(0, 0, 0, 0.8);
             color: white; /* S'assurer que l'icône reste blanche même au survol */
+        }
+
+        .host-icon {
+            position: absolute;
+            bottom: 25px;
+            right: 10px;
+            background-color: rgba(255, 0, 0, 0.67);
+            color: white;
+            font-weight: bold;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
     </style>

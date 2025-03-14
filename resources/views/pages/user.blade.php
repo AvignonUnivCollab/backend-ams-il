@@ -200,12 +200,3 @@
 
 @endsection
 
-<script>
-    function populateModal(user) {
-        document.getElementById('updateUserModal').querySelector('#user_id').value = user.id;
-        document.getElementById('updateUserModal').querySelector('#update_username').value = user.username;
-        document.getElementById('updateUserModal').querySelector('#update_email').value = user.email;
-    }
-
-</script>
-

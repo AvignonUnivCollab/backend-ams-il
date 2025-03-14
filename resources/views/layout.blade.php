@@ -34,7 +34,10 @@
                                                                            alt="logo"/></a>
         </div>
 
-        <a href="{{ route('pages.login') }}" class="btn btn-inverse-danger btn-fw mr-4">Se déconnecter</a>
+        <form action="{{ route('users.logout') }}" method="POST" class="d-inline">
+            @csrf
+            <button type="submit" class="btn btn-inverse-danger btn-fw mr-4">Se déconnecter</button>
+        </form>
 
     </nav>
     <!-- partial -->
