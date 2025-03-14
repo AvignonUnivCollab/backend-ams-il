@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,14 +24,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/', function () {
-    return view('dashboard');
-})->name('dashboard');
-
-
-Route::get('/category', function () {
-    return view('pages.category');
-})->name('pages.category');
 
 
 Route::get('/login', function () {
@@ -47,16 +41,24 @@ Route::get('/register', function () {
  |
 */
 
+//Home
+Route::get('/', [DashboardController::class, 'statsAndCurrentUser'])->middleware('auth.custom')->name('dashboard');
+
 //Rooms
-Route::get('/living-room', [RoomController::class, 'index'])->name('pages.living-room');
+Route::get('/living-room', [RoomController::class, 'index'])->middleware('auth.custom')->name('pages.living-room');
 Route::post('/living-room', [RoomController::class, 'store'])->name('living-room.store');
-Route::put('/living-room/{id}', [RoomController::class, 'update'])->name('rooms.update');
+Route::put('/living-room/{id}', [RoomController::class, 'update'])->name('living-room.update');
 
 //Auth
 Route::post('/login', [UserController::class, 'login'])->name('users.login');
+Route::post('/logout', [UserController::class, 'logout'])->name('users.logout');
 
 //Users
 Route::post('/users', [UserController::class, 'store'])->name('users.store');
-Route::get('/users', [UserController::class, 'index'])->name('pages.user');
+Route::get('/users', [UserController::class, 'index'])->middleware('auth.custom')->name('pages.user');
 Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
 
+//Category
+Route::get('/category', [CategoryController::class, 'index'])->middleware('auth.custom')->name('pages.category');
+Route::post('/category', [CategoryController::class, 'store'])->name('category.store');
+Route::put('/category/{id}', [CategoryController::class, 'update'])->name('category.update');

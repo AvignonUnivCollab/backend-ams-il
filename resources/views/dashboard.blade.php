@@ -6,7 +6,7 @@
             <div class="col-md-12 grid-margin">
                 <div class="row">
                     <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                        <h3 class="font-weight-bold">Bienvenu</h3>
+                        <h3 class="font-weight-bold">Bienvenu {{$data['user']->name}}</h3>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                         <div class="card card-tale">
                             <div class="card-body">
                                 <p class="mb-4">Total de vidéos</p>
-                                <p class="fs-30 mb-2">4006</p>
+                                <p class="fs-30 mb-2">{{ $data['videoCount'] }}</p>
                                 <p>10.00% (30 jours)</p>
                             </div>
                         </div>
@@ -44,8 +44,8 @@
                     <div class="col-md-6 mb-4 stretch-card transparent">
                         <div class="card card-dark-blue">
                             <div class="card-body">
-                                <p class="mb-4">Total vues</p>
-                                <p class="fs-30 mb-2">61344</p>
+                                <p class="mb-4">Total salons</p>
+                                <p class="fs-30 mb-2">{{ $data['salonCount'] }}</p>
                                 <p>22.00% (30 jours)</p>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                         <div class="card card-light-blue">
                             <div class="card-body">
                                 <p class="mb-4">vidéos playslists</p>
-                                <p class="fs-30 mb-2">34040</p>
+                                <p class="fs-30 mb-2">{{ $data['playlistCount'] }}</p>
                                 <p>2.00% (30 jours)</p>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                         <div class="card card-light-danger">
                             <div class="card-body">
                                 <p class="mb-4">Total commentaires</p>
-                                <p class="fs-30 mb-2">47033</p>
+                                <p class="fs-30 mb-2">{{ $data['messageCount'] }}</p>
                                 <p>0.22% (30 jours)</p>
                             </div>
                         </div>

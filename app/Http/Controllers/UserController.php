@@ -91,27 +91,12 @@ class UserController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        //utilisateur existe
-        $data = DB::table('users')->where('username', $request->username)->first();
 
-        $user = null;
-        if ($data) {
-            $user = new User((array)$data);
-            $user->exists = true;
-        }
+        $user = User::where('username', $request->username)->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
             //Authentification reussie
             Auth::login($user);
-
-            DB::table('users')->update([
-                'name' => $request->name,
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
 
             return redirect()->route('dashboard')->with('success', 'Connection réussie !.');
         }
@@ -122,20 +107,11 @@ class UserController extends Controller
     }
 
 
-    public function logout() {
+    public function logout(Request $request) {
         Auth::logout();
-    }
-    public function joinRoom(Request $request, $roomId)
-    {
 
-        $user = auth::user();
-        $room = Room::findOrFail($roomId);
-
-        //Na pas deja join
-        if (!$user->rooms()->where('room_id', $roomId)->exists()) {
-            $user->rooms()->attach($room->id, ['role' => 'membre']);
-        }
-
-        return redirect()->route('rooms.show', $roomId);
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('dashboard')->with('success', 'Déconnexion réussie !');
     }
 }
