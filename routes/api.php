@@ -20,13 +20,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/docs/api-docs.json', function () {
-    return response()->file(storage_path('api-docs/api-docs.json'));
-});
+
 Route::get('/docs', [SwaggerController::class, 'api'])->name('l5-swagger.api');
 
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::post('check-email', [AuthController::class, 'checkEmail'])->middleware('throttle:5,1');
+Route::post('change-password', [AuthController::class, 'changePassword'])->middleware('throttle:5,1');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('logout', [AuthController::class, 'logout']);

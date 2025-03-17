@@ -73,7 +73,7 @@ class AuthController extends BaseController
             'password' => 'required|string|min:6',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this
                 ->sendError(
                     'Validation Error',
@@ -93,19 +93,20 @@ class AuthController extends BaseController
 
         $token = JWTAuth::fromUser($user);
 
-       return $this->sendResponse([
-           'token' => $token,
-           'user' => $user,
-       ], 'user register successfully');
+        return $this->sendResponse([
+            'token' => $token,
+            'user' => $user,
+        ], 'user register successfully');
     }
 
     /**
      *  login user and return token
      */
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $credentials = $request->only('username', 'password');
 
-        if(!$token = Auth::attempt($credentials)) {
+        if (!$token = Auth::attempt($credentials)) {
             return $this->sendError(
                 'Unauthorized',
                 ['error' => 'Invalid credentials'],
@@ -133,9 +134,48 @@ class AuthController extends BaseController
         }
     }
 
-    public function currentUser() {
+    public function currentUser()
+    {
         return $this->sendResponse([
             'user' => Auth::user(),
         ], 'User retrieved successfully.');
+    }
+
+
+    public function checkEmail(Request $request)
+    {
+        $request->validate([
+            "email" => "required|email",
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return $this->sendError(
+                'User not found',
+                [],
+                404
+            );
+        }
+
+        return $this->sendResponse(['user' => $user], 'user exists');
+    }
+
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|email',
+            'new_password' => 'required|email'
+        ]);
+
+        $user = Auth::user();
+
+        if(!Hash::check($request->current_password, $request->new_password)) {
+            return $this->sendError('Current password does not match', [], 400);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+        return $this->sendResponse([], 'Password successfully changed.');
     }
 }
