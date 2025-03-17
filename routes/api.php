@@ -29,6 +29,6 @@ Route::post('check-email', [AuthController::class, 'checkEmail'])->middleware('t
 Route::post('change-password', [AuthController::class, 'changePassword'])->middleware('throttle:5,1');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('logout', [AuthController::class, 'logout']);
+    Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
 });
