@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CategoryController;
+use App\Http\Controllers\api\RoomController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use L5Swagger\Http\Controllers\SwaggerController;
@@ -32,7 +33,12 @@ Route::post('change-password', [AuthController::class, 'changePassword'])->middl
 Route::get('categories', [CategoryController::class, 'index'])->middleware('throttle:5,1');
 Route::get('/categories/{id}', [CategoryController::class, 'show'])->middleware('throttle:5,1');
 
+Route::get('/rooms', [RoomController::class, 'index'])->middleware('throttle:5,1');
+Route::post('/room/{roomId}/join', [RoomController::class, 'join'])->middleware('throttle:5,1');
+Route::post('/room/{roomId}/leave', [RoomController::class, 'leave'])->middleware('throttle:5,1');
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
+
 });

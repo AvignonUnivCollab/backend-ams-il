@@ -12,13 +12,13 @@ class AuthMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
 
-        if (!auth()->check()) {
-            return redirect()->route('pages.login');
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            return redirect()->route('pages.login')->with('error', 'Accès refusé. Vous devez être administrateur.');
         }
 
         return $next($request);

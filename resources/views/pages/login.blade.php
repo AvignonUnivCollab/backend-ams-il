@@ -26,6 +26,18 @@
             <div class="row w-100 mx-0">
                 <div class="col-lg-4 mx-auto">
                     <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+                        @if(session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
+                        @if(session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
                         <div class="brand-logo">
                             <img src="../../assets/images/logo.svg" alt="logo">
                         </div>
@@ -59,8 +71,7 @@
                             <div class="mt-3 d-grid gap-2">
                                 <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">Se connecter</button>
                             </div>
-                            <div class="text-center mt-4 font-weight-light"> Vous n'avez pas de compte ? <a href="{{ route('pages.register') }}" class="text-primary">S'enregistrer</a>
-                            </div>
+
                         </form>
                     </div>
                 </div>
