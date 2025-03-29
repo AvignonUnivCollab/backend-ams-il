@@ -40,7 +40,7 @@
                                 <th>Email</th>
                                 <th>Membre depuis</th>
                                 <th>dernière connection</th>
-                                <th>Visionnage/Mois passé</th>
+                                <th>Role</th>
                                 <th>Modifier</th>
                             </tr>
                             </thead>
@@ -53,7 +53,14 @@
                                         <td>{{$user->email}}</td>
                                         <td>{{$user->days_since_creation }} jour(s)</td>
                                         <td>{{$user->days_last_connection }} jour(s)</td>
-                                        <td class="text-danger"> 28.76% <i class="ti-arrow-down"></i></td>
+                                        <td class="
+                                                @if($user->role == 'admin') text-danger
+                                                @elseif($user->role == 'moderateur') text-warning
+                                                @else text-success
+                                                @endif">
+                                            {{ ucfirst($user->role) }}
+                                        </td>
+
                                         <td>
                                             <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
                                                     data-bs-target="#updateUserModal-{{ $user->id }}">
@@ -120,6 +127,22 @@
                             @enderror
                         </div>
                         <div class="mb-4">
+                            <label for="role" class="form-label">Rôle</label>
+                            <select
+                                id="role"
+                                name="role"
+                                class="form-control form-control-lg @error('role') is-invalid @enderror"
+                                required>
+                                <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>Utilisateur</option>
+                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrateur</option>
+                                <option value="editor" {{ old('role') == 'moderateur' ? 'selected' : '' }}>Modérateur</option>
+                            </select>
+                            @error('role')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
                             <label
                                 for="email"
                                 class="form-label">Email</label>
@@ -181,6 +204,21 @@
                             <div class="mb-4">
                                 <label for="username-{{ $user->id }}" class="form-label">Username</label>
                                 <input type="text" id="username-{{ $user->id }}" name="username" class="form-control" value="{{ $user->username }}" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="role" class="form-label">Rôle</label>
+                                <select
+                                    id="role"
+                                    name="role"
+                                    class="form-control form-control-lg @error('role') is-invalid @enderror"
+                                    required>
+                                    <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>Utilisateur</option>
+                                    <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrateur</option>
+                                    <option value="editor" {{ old('role') == 'moderateur' ? 'selected' : '' }}>Modérateur</option>
+                                </select>
+                                @error('role')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="mb-4">

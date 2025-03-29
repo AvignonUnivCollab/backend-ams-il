@@ -26,12 +26,6 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#">
-                <i class="icon-grid-2 menu-icon"></i>
-                <span class="menu-title">Mes vidéos</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
                 <i class="icon-columns menu-icon"></i>
                 <span class="menu-title">Ma playlist</span>
             </a>

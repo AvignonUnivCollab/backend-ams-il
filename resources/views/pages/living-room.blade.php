@@ -34,6 +34,7 @@
 
                 <div class="col-md-3 mt-4">
                     <div class="card">
+                        <a href="{{ route('pages.video', ['id' => $room->id]) }}" style="color: gray; text-decoration: none;">
                         <div class="position-relative">
                             <img src="{{ asset('storage/' . $room->thumbnail) }}" alt="Image" class="card-img-top card-img-custom">
                             <div class="play-icon">
@@ -55,6 +56,7 @@
                         <div class="edit-icon" data-bs-toggle="modal" data-bs-target="#updateSalonModal-{{ $room->id }}">
                             <i class="fas fa-edit text-white-50" style="font-size: 14px;"></i>
                         </div>
+                        </a>
                     </div>
                 </div>
             @endforeach

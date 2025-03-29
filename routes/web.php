@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VideoController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,3 +63,7 @@ Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update
 Route::get('/category', [CategoryController::class, 'index'])->middleware('auth.custom')->name('pages.category');
 Route::post('/category', [CategoryController::class, 'store'])->name('category.store');
 Route::put('/category/{id}', [CategoryController::class, 'update'])->name('category.update');
+
+//Videos
+Route::get('/videos', [VideoController::class, 'index'])->middleware('auth.custom')->name('pages.video');
+Route::post('/videos', [VideoController::class, 'store'])->name('videos.store');

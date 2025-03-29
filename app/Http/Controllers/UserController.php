@@ -38,6 +38,7 @@ class UserController extends Controller
             'username' => 'required|string|max:50|unique:users',
             'email' => 'required|string|email|max:50|unique:users',
             'password' => 'required|string|min:6',
+            'role' => 'required|in:user,admin,moderateur',
         ]);
 
         DB::table('users')->insert([
@@ -45,6 +46,7 @@ class UserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -69,6 +71,7 @@ class UserController extends Controller
             'name' => 'required|string|max:50',
             'username' => 'required|string|max:50|unique:users,username,' . $id,
             'email' => 'required|string|email|max:50|unique:users,email,' . $id,
+            'role' => 'required|in:user,admin,moderateur',
         ]);
 
         DB::table('users')
@@ -77,6 +80,7 @@ class UserController extends Controller
                 'name' => $request->name,
                 'username' => $request->username,
                 'email' => $request->email,
+                'role' => $request->role,
                 'updated_at' => now()
             ]);
 

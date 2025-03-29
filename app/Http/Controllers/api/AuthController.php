@@ -106,17 +106,19 @@ class AuthController extends BaseController
     {
         $credentials = $request->only('username', 'password');
 
-        if (!$token = Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials)) {
             return $this->sendError(
                 'Unauthorized',
-                ['error' => 'Invalid credentials'],
                 401
             );
         }
 
+        $user = Auth::user();
+        $token = JWTAuth::fromUser($user);
+
         return $this->sendResponse([
             'token' => $token,
-            'user' => Auth::user(),
+            'user' => $user,
         ], 'User logged in successfully');
     }
 
