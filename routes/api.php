@@ -41,9 +41,9 @@ Route::post('/room/{roomId}/leave', [RoomController::class, 'leave'])->middlewar
 Route::post('room/{roomId}/join', [RoomController::class, 'join'])->middleware('throttle:5,1');
 
 Route::middleware('jwt.auth')->get('/messages/{roomId}', [MessageController::class, 'index'])->middleware('throttle:5,1');
+Route::middleware('jwt.auth')->get('me', [AuthController::class, 'me'])->middleware('throttle:5,1');
 Route::post('/sent-message/{roomId}', [MessageController::class, 'store'])->middleware('throttle:5,1');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('me', [AuthController::class, 'me']);
 });

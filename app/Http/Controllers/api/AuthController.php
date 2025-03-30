@@ -138,10 +138,19 @@ class AuthController extends BaseController
         }
     }
 
-    public function currentUser()
+    public function me(Request $request)
     {
+        $user = $this->authenticate($request);
+
+        if (!$user) {
+            return $this->sendError(
+                'Unauthorised.',
+                401
+            );
+        }
+
         return $this->sendResponse([
-            'user' => Auth::user(),
+            'user' => $user,
         ], 'User retrieved successfully.');
     }
 

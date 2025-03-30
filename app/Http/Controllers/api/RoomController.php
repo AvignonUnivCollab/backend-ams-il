@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\User;
 use App\Models\UserRoom;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RoomController extends BaseController
@@ -14,36 +15,40 @@ class RoomController extends BaseController
 
     public function index()
     {
-        $rooms = Room::orderByDesc('created_at')->get();
+        $rooms = Room::join('users', 'rooms.host_id', '=', 'users.id')
+            ->leftJoin('user_room', 'rooms.id', '=', 'user_room.room_id')
+            ->leftJoin('messages', 'rooms.id', '=', 'messages.room_id')
+            ->select(
+                'rooms.id',
+                'rooms.name',
+                'rooms.thumbnail',
+                'rooms.created_at',
+                'users.name as host_name',
+                DB::raw('COUNT(DISTINCT user_room.id) as user_count'),
+                DB::raw('COUNT(DISTINCT messages.id) as message_count')
+            )
+            ->groupBy('rooms.id', 'rooms.name', 'rooms.thumbnail', 'rooms.created_at', 'users.name')
+            ->orderBy('rooms.created_at', 'desc')
+            ->get();
+
         return $this
             ->sendResponse(
-                $rooms,
-            'Rooms retrieved successfully.'
-        );
+                $rooms->toArray(),
+                'Rooms retrieved successfully.'
+            );
     }
 
 
     public function join(Request $request, $roomId)
     {
 
-        $token = $request->bearerToken();
+        $user = $this->authenticate($request);
 
-        if(!$token) {
-            return $this
-                ->sendError(
-                    'Token not provided.',
-                    401
-                );
-        }
-        $user = JWTAuth::setToken($token)->authenticate();
-
-        //Si user n'est pas connecter
-        if(!$user) {
-            return $this
-                ->sendError(
-                    'Unauthorised.',
-                    401
-                );
+        if (!$user) {
+            return $this->sendError(
+                'Unauthorised.',
+                401
+            );
         }
 
         //Salon nexiste pas

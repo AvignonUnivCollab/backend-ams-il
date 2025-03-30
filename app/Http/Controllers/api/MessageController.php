@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Message;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mailer\Event\MessageEvent;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class MessageController extends BaseController
@@ -63,20 +66,13 @@ class MessageController extends BaseController
 
     public function store(Request $request, $room_id) {
 
-        $token = $request->bearerToken();
-        if(!$token) return $this
-            ->sendError(
-                'Token not provided.',
-                400
-            );
+        $user = $this->authenticate($request);
 
-        $user = JWTAuth::setToken($token)->authenticate();
-        if(!$user) {
-            return $this
-                ->sendError(
-                    'Unauthorised.',
-                    401
-                );
+        if (!$user) {
+            return $this->sendError(
+                'Unauthorised.',
+                401
+            );
         }
 
         $room = Room::findOrFail($room_id);
@@ -88,15 +84,17 @@ class MessageController extends BaseController
                 );
         }
 
-        $request->validate([
-            'message' => 'required|string|max:255',
-        ]);
+        $request->validate(['message' => 'required|string|max:255']);
 
        $message = Message::create([
             'room_id' => $room_id,
             'sender_id' => $user->id,
             'content' => $request->message
         ]);
+
+        broadcast(new MessageSent($message->content))->to('room-' . $room_id);
+
+        Log::info('Message broadcasted', ['message' => $message]);
 
         return $this->sendResponse(
             $message,

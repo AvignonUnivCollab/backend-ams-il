@@ -13,22 +13,13 @@ class UserRoomController extends BaseController
     public function rooms_join(Request $request)
     {
 
-        $token = $request->bearerToken();
-        if(!$token) {
-            return $this
-                ->sendError(
-                    'Token not provided.',
-                    400
-                );
-        }
+        $user = $this->authenticate($request);
 
-        $user = JWTAuth::setToken($token)->authenticate();
-        if(!$user) {
-            return $this
-                ->sendError(
-                    'Unauthorised.',
-                    401
-                );
+        if (!$user) {
+            return $this->sendError(
+                'Unauthorised.',
+                401
+            );
         }
 
         $user_rooms = UserRoom::join('rooms', 'rooms.id', '=', 'user_room.room_id')
