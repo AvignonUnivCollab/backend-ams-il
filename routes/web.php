@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoController;
@@ -67,3 +68,6 @@ Route::put('/category/{id}', [CategoryController::class, 'update'])->name('categ
 //Videos
 Route::get('/videos', [VideoController::class, 'index'])->middleware('auth.custom')->name('pages.video');
 Route::post('/videos', [VideoController::class, 'store'])->name('videos.store');
+
+//messages
+Route::get('/messages', [MessageController::class, 'index'])->middleware('auth.custom')->name('pages.message');

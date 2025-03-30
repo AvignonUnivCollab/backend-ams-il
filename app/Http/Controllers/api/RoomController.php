@@ -4,7 +4,10 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Room;
+use App\Models\User;
+use App\Models\UserRoom;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RoomController extends BaseController
 {
@@ -23,8 +26,19 @@ class RoomController extends BaseController
     public function join(Request $request, $roomId)
     {
 
+        $token = $request->bearerToken();
+
+        if(!$token) {
+            return $this
+                ->sendError(
+                    'Token not provided.',
+                    401
+                );
+        }
+        $user = JWTAuth::setToken($token)->authenticate();
+
         //Si user n'est pas connecter
-        if(!auth()->check()) {
+        if(!$user) {
             return $this
                 ->sendError(
                     'Unauthorised.',
@@ -32,11 +46,8 @@ class RoomController extends BaseController
                 );
         }
 
-        //current user
-        $user = auth()->user();
-
         //Salon nexiste pas
-        $room = Room::find($roomId);
+        $room = Room::findOrFail($roomId);
         if(!$room) {
             return $this
                 ->sendError(
@@ -46,7 +57,7 @@ class RoomController extends BaseController
         }
 
         //verifier si il est deja dans le salon
-        if ($user->rooms->contains($roomId)) {
+        if ($user->rooms()->where('rooms.id', $roomId)->exists()) {
             return $this
                 ->sendError(
                     'Room is already joined.',
@@ -54,12 +65,11 @@ class RoomController extends BaseController
                 );
         }
 
-        $user->rooms()->attach($roomId);
+        $user->rooms()->attach($roomId, ['role' => 'membre']);
         return $this
             ->sendResponse(
                 $room,
-                'Room joined successfully.',
-                200
+                'Room joined successfully.'
             );
     }
 
@@ -67,15 +77,25 @@ class RoomController extends BaseController
 
     public function leave(Request $request, $roomId)
     {
-        if(!auth()->check()) {
+
+        $token = $request->bearerToken();
+
+        if(!$token) {
+            return $this
+                ->sendError(
+                    'Token not provided.',
+                    401
+                );
+        }
+        $user = JWTAuth::setToken($token)->authenticate();
+
+        if(!$user) {
             return $this
                 ->sendError(
                     'Unauthorised.',
                     401
                 );
         }
-
-        $user = auth()->user();
 
         $room = Room::findOrFail($roomId);
         if(!$room) {
@@ -86,20 +106,20 @@ class RoomController extends BaseController
                 );
         }
 
-        if (!$user->rooms->contains($roomId)) {
+        if (!$user->rooms()->where('rooms.id', $roomId)->exists()) {
             return $this
                 ->sendError(
-                    'Room is already leave.',
+                    'Room is already joined.',
                     400
                 );
         }
+
 
         $user->rooms()->detach($roomId);
         return $this
             ->sendResponse(
                 $room,
-                'Room leave successfully.',
-                200
+                'Room leave successfully.'
             );
     }
 }

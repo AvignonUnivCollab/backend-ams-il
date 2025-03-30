@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Room extends Model
 {
@@ -21,9 +22,11 @@ class Room extends Model
         return $this->hasMany(Message::class);
     }
 
-    public function users()
+    public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_room')->withPivot('role')->withTimestamps();
+        return $this
+            ->belongsToMany(User::class, 'user_room')
+            ->withTimestamps();
     }
 
     public function videos()
