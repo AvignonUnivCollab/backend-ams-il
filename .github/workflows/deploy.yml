@@ -37,24 +37,6 @@ jobs:
     # 🚀 Add SSH key
     - name: Add SSH key and configure known_hosts
       run: |
-        # Créer le dossier ~/.ssh si nécessaire
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh  # Sécuriser le dossier
-    
-        # Ajouter la clé privée SSH proprement
-        printf "%s\n" "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa  # Sécuriser la clé privée
-    
-        # Vérification : s'assurer que la clé privée n'est pas vide
-        if [ ! -s ~/.ssh/id_rsa ]; then
-            echo "❌ SSH key is empty!"
-            exit 1
-        fi
-    
-        # Vérifier le contenu de la clé privée
-        echo "🔍 Clé privée :"
-        cat ~/.ssh/id_rsa
-    
         # Ajouter la clé du serveur à known_hosts
         ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts  # Lecture autorisée pour éviter certains warnings
