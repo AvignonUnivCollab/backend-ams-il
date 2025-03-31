@@ -27,12 +27,18 @@ jobs:
     # 🛠️ Correction : Création et configuration de la clé SSH
     - name: Add SSH key and configure known_hosts
       run: |
-        set -e
         mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | awk '{print $1}' > ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
-        ls -la ~/.ssh  # Vérification des fichiers SSH
+
+     # 🛠️ Correction : Debug SSH Key
+    - name: Debug SSH Key
+      run: |
+        echo "Affichage des 5 premières lignes de la clé privée :"
+        head -n 5 ~/.ssh/id_rsa
+        echo "Vérification des permissions :"
+        ls -la ~/.ssh/
 
     # 🚀 Tester la connexion SSH avant de déployer
     - name: Test SSH Connection
@@ -44,7 +50,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no webgrp04@192.168.2.34 << 'EOF'
           set -e
-          cd /chemin/vers/ton/projet
+          cd backend-ams-il
           git pull origin main
           composer install --no-dev --optimize-autoloader
           php artisan migrate --force
