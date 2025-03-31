@@ -20,6 +20,9 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan 192.168.2.34 >> ~/.ssh/known_hosts
 
+    - name: Check server connectivity
+      run: ping -c 3 192.168.2.34
+
     - name: Deploy to server
       run: |
         ssh -o StrictHostKeyChecking=no webgrp04@192.168.2.34 << 'EOF'
