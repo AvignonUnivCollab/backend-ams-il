@@ -23,14 +23,15 @@ jobs:
         else
           echo "✅ SSH_PRIVATE_KEY is set."
         fi
+        echo "Testing secret length: $(echo -n "${{ secrets.SSH_PRIVATE_KEY }}" | wc -c) characters"
 
     # 🛠️ Correction : Création et configuration de la clé SSH
     - name: Add SSH key and configure known_hosts
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
+         mkdir -p ~/.ssh
+         echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/\r$//' > ~/.ssh/id_rsa
+         chmod 600 ~/.ssh/id_rsa
+         ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
 
      # 🛠️ Correction : Debug SSH Key
     - name: Debug SSH Key
