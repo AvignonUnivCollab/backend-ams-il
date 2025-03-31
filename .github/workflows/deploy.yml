@@ -28,8 +28,13 @@ jobs:
     # 🛠️ Correction : Debug SSH Key
     - name: Debug SSH Key
       run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | head -n 5
-        
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        echo "🔍 Vérification : Nombre de lignes dans id_rsa : $(wc -l < ~/.ssh/id_rsa)"
+        ls -la ~/.ssh
+
+  # 🚀 Add SSH key
     - name: Add SSH key and configure known_hosts
       run: |
         mkdir -p ~/.ssh
@@ -41,7 +46,7 @@ jobs:
     # 🚀 Tester la connexion SSH avant de déployer
     - name: Test SSH Connection
       run: |
-        ssh -o StrictHostKeyChecking=no webgrp04@192.168.2.34 "echo '✅ Connexion SSH réussie !'"
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no user@192.168.2.34 "echo '✅ Connexion réussie !'"
 
     # 🚀 Déploiement
     - name: Deploy to server
