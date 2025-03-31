@@ -13,7 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # 🔍 Vérifier si le secret SSH_PRIVATE_KEY est bien défini
+    # 🔑 Vérifier que la clé SSH est bien définie
     - name: Debug Secrets
       run: |
         echo "Testing if SSH_PRIVATE_KEY exists..."
@@ -24,62 +24,33 @@ jobs:
           echo "✅ SSH_PRIVATE_KEY is set."
         fi
 
-    # 🔑 Ajout de la clé SSH et configuration de `known_hosts`
+    # 🛠️ Correction : Création et configuration de la clé SSH
     - name: Add SSH key and configure known_hosts
       run: |
         set -e
         mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | awk '{print $1}' > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
         ls -la ~/.ssh  # Vérification des fichiers SSH
 
-    # 🛠️ Vérification des permissions et de l’accès SSH
-    - name: Debug SSH Key
-      run: |
-        echo "Affichage des 5 premières lignes de la clé privée :"
-        head -n 5 ~/.ssh/id_rsa
-        echo "Vérification des permissions :"
-        ls -la ~/.ssh/
-
-    # 🔄 Vérifier la connectivité du serveur
-    - name: Check server connectivity
-      run: ping -c 3 192.168.2.34
-
-    # 🔌 Vérifier la connexion SSH avant de déployer
+    # 🚀 Tester la connexion SSH avant de déployer
     - name: Test SSH Connection
       run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no webgrp04@192.168.2.34 "echo '✅ Connexion SSH réussie !'"
+        ssh -o StrictHostKeyChecking=no webgrp04@192.168.2.34 "echo '✅ Connexion SSH réussie !'"
 
-    # 🚀 Déploiement du projet Laravel
+    # 🚀 Déploiement
     - name: Deploy to server
       run: |
         ssh -o StrictHostKeyChecking=no webgrp04@192.168.2.34 << 'EOF'
           set -e
-          echo "📂 Accès au dossier du projet..."
-          cd /home/webgrp04/backend-ams-il
-
-          echo "🔄 Pull du dernier code depuis GitHub..."
+          cd /chemin/vers/ton/projet
           git pull origin main
-
-          echo "📦 Installation des dépendances Composer..."
           composer install --no-dev --optimize-autoloader
-
-          echo "📊 Exécution des migrations Laravel..."
           php artisan migrate --force
-
-          echo "🧹 Nettoyage du cache Laravel..."
           php artisan config:clear && php artisan cache:clear && php artisan route:clear
-
-          echo "🔗 Création du lien symbolique pour le stockage..."
           php artisan storage:link
-
-          echo "🔑 Configuration des permissions..."
           chmod -R 775 storage bootstrap/cache
           chown -R www-data:www-data storage bootstrap/cache
-
-          echo "🔄 Redémarrage du serveur web..."
           sudo systemctl restart apache2
-
-          echo "✅ Déploiement terminé avec succès !"
         EOF
