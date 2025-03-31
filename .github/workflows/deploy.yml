@@ -1,72 +1,60 @@
-name: Deploy Laravel to Server
+name: Deploy to Server
 
 on:
   push:
     branches:
-      - main
+      - main  # Ou la branche que tu souhaites déployer
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      # Vérifier si la clé privée SSH est définie
+      - name: Check if SSH_PRIVATE_KEY exists
+        run: |
+          echo "Testing if SSH_PRIVATE_KEY exists..."
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "❌ SSH_PRIVATE_KEY is not set!"
+            exit 1
+          else
+            echo "✅ SSH_PRIVATE_KEY is set."
+          fi
 
-    # 🔑  Vérifier que la clé SSH est bien définie
-    - name: Debug Secrets
-      run: |
-        echo "Testing if SSH_PRIVATE_KEY exists..."
-        if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-          echo "❌ ERROR: SSH_PRIVATE_KEY is empty or not set!"
-          exit 1
-        else
-          echo "✅ SSH_PRIVATE_KEY is set."
-        fi
-        echo "Testing secret length: $(echo -n "${{ secrets.SSH_PRIVATE_KEY }}" | wc -c) characters"
+      # Créer le dossier .ssh et configurer la clé SSH
+      - name: Add SSH key and configure known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh  # Sécuriser le dossier .ssh
 
-    # 🛠️ Correction : Debug SSH Key
-    - name: Debug SSH Key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        echo "🔍 Vérification : Nombre de lignes dans id_rsa : $(wc -l < ~/.ssh/id_rsa)"
-        ls -la ~/.ssh
+          echo "🔍 SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}"
 
-    # 🚀 Add SSH key
-    - name: Add SSH key and configure known_hosts
-      run: |
-        # Ajouter la clé du serveur à known_hosts
-        ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts  # Lecture autorisée pour éviter certains warnings
-    
-        # Vérifier le contenu de known_hosts
-        echo "🔍 Contenu de known_hosts :"
-        cat ~/.ssh/known_hosts
-    
-        # Tester la connexion SSH avec logs détaillés
-        ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa user@192.168.2.34 "echo '✅ SSH connection successful'"
-        shell: /usr/bin/bash -e {0}
+          # Ajouter la clé privée SSH dans le fichier id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/\r$//' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa  # Sécuriser la clé privée
 
+          # Vérification si la clé privée n'est pas vide
+          if [ ! -s ~/.ssh/id_rsa ]; then
+            echo "❌ SSH key is empty!"
+            exit 1
+          fi
 
-    # 🚀 Tester la connexion SSH avant de déployer
-    - name: Test SSH Connection
-      run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no user@192.168.2.34 "echo '✅ Connexion réussie !'"
+          # Ajouter la clé du serveur au fichier known_hosts
+          ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts  # Permettre la lecture du fichier known_hosts
 
-    # 🚀 Déploiement
-    - name: Deploy to server
-      run: |
-        ssh -o StrictHostKeyChecking=no webgrp04@192.168.2.34 << 'EOF'
-          set -e
-          cd backend-ams-il
-          git pull origin main
-          composer install --no-dev --optimize-autoloader
-          php artisan migrate --force
-          php artisan config:clear && php artisan cache:clear && php artisan route:clear
-          php artisan storage:link
-          chmod -R 775 storage bootstrap/cache
-          chown -R www-data:www-data storage bootstrap/cache
-          sudo systemctl restart apache2
-        EOF
+          # Vérification du contenu de known_hosts
+          echo "🔍 Contenu de known_hosts :"
+          cat ~/.ssh/known_hosts
+
+      # Tester la connexion SSH avec logs détaillés
+      - name: Test SSH connection
+        run: |
+          echo "🔍 Testing SSH connection..."
+          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa user@192.168.2.34 "echo '✅ SSH connection successful'"
+
+      # Déployer ton application
+      - name: Deploy application
+        run: |
+          # Remplacer cette commande par celle nécessaire pour ton déploiement
+          echo "🚀 Deploying application to server..."
+          ssh -i ~/.ssh/id_rsa user@192.168.2.34 'cd /path/to/your/app && git pull && ./deploy.sh'
