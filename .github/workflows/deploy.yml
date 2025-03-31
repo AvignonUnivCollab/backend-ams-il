@@ -9,52 +9,48 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # Vérifier si la clé privée SSH est définie
-      - name: Check if SSH_PRIVATE_KEY exists
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Vérifier si la clé SSH est bien définie
+      - name: Vérification de la clé SSH
         run: |
-          echo "Testing if SSH_PRIVATE_KEY exists..."
+          echo "🔍 Vérification de SSH_PRIVATE_KEY :"
           if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-            echo "❌ SSH_PRIVATE_KEY is not set!"
+            echo "❌ SSH_PRIVATE_KEY is missing!"
             exit 1
           else
-            echo "✅ SSH_PRIVATE_KEY is set."
+            echo "✅ SSH_PRIVATE_KEY exists"
           fi
 
-      # Créer le dossier .ssh et configurer la clé SSH
-      - name: Add SSH key and configure known_hosts
+      # Créer le dossier .ssh s'il n'existe pas
+      - name: Create .ssh directory
         run: |
           mkdir -p ~/.ssh
-          chmod 700 ~/.ssh  # Sécuriser le dossier .ssh
+          chmod 700 ~/.ssh  # Sécuriser le dossier
 
-          echo "🔍 SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}"
-
-          # Ajouter la clé privée SSH dans le fichier id_rsa
+      # Ajouter la clé privée SSH
+      - name: Add SSH private key
+        run: |
+          echo "🔍 Ajout de la clé privée SSH"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/\r$//' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa  # Sécuriser la clé privée
-
-          # Vérification si la clé privée n'est pas vide
+          # Vérification : s'assurer que la clé privée n'est pas vide
           if [ ! -s ~/.ssh/id_rsa ]; then
-            echo "❌ SSH key is empty!"
-            exit 1
+              echo "❌ SSH key is empty!"
+              exit 1
           fi
 
-          # Ajouter la clé du serveur au fichier known_hosts
+      # Ajouter la clé publique du serveur à known_hosts
+      - name: Add server to known_hosts
+        run: |
+          echo "🔍 Ajouter la clé du serveur à known_hosts"
           ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts  # Permettre la lecture du fichier known_hosts
+          chmod 644 ~/.ssh/known_hosts  # Lecture autorisée pour éviter certains warnings
 
-          # Vérification du contenu de known_hosts
-          echo "🔍 Contenu de known_hosts :"
-          cat ~/.ssh/known_hosts
-
-      # Tester la connexion SSH avec logs détaillés
-      - name: Test SSH connection
+      # Vérifier la connexion SSH
+      - name: SSH Test
         run: |
-          echo "🔍 Testing SSH connection..."
-          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa user@192.168.2.34 "echo '✅ SSH connection successful'"
-
-      # Déployer ton application
-      - name: Deploy application
-        run: |
-          # Remplacer cette commande par celle nécessaire pour ton déploiement
-          echo "🚀 Deploying application to server..."
-          ssh -i ~/.ssh/id_rsa user@192.168.2.34 'cd /path/to/your/app && git pull && ./deploy.sh'
+          echo "🔍 Test de la connexion SSH"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa user@192.168.2.34 "echo '✅ SSH connection successful'"
