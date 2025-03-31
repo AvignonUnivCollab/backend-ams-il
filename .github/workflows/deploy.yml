@@ -24,6 +24,7 @@ jobs:
             echo "✅ SSH_PRIVATE_KEY exists"
           fi
 
+
       # Créer le dossier .ssh s'il n'existe pas
       - name: Create .ssh directory
         run: |
