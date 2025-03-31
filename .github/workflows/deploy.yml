@@ -61,6 +61,9 @@ jobs:
           ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts  # Lecture autorisée pour éviter certains warnings
 
+      - name: Test SSH connection
+        run: ssh -vvv -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa user@192.168.2.34 "echo '✅ SSH connection successful'"
+
       # Vérifier la connexion SSH
       - name: SSH Test
         run: |
