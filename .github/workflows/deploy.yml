@@ -37,11 +37,26 @@ jobs:
   # 🚀 Add SSH key
     - name: Add SSH key and configure known_hosts
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/\r$//' | awk '{print $0 "\n"}' > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        cat ~/.ssh/id_rsa | head -n 10
-        ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh  # Sécuriser le dossier
+    
+          # Ajouter la clé privée SSH en s'assurant qu'elle est bien formatée
+          printf "%s" "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa  # Sécuriser la clé privée
+    
+          # Vérification : s'assurer que la clé privée n'est pas vide
+          if [ ! -s ~/.ssh/id_rsa ]; then
+              echo "❌ SSH key is empty!"
+              exit 1
+          fi
+    
+          # Ajouter la clé du serveur à known_hosts
+          ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts  # Lecture autorisée pour éviter certains warnings
+    
+          # Tester la connexion SSH
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa user@192.168.2.34 "echo '✅ SSH connection successful'"
+    
 
     # 🚀 Tester la connexion SSH avant de déployer
     - name: Test SSH Connection
