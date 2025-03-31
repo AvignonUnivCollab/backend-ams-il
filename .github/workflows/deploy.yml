@@ -24,13 +24,13 @@ jobs:
             echo "✅ SSH_PRIVATE_KEY exists"
           fi
 
-
       # Créer le dossier .ssh s'il n'existe pas
       - name: Create .ssh directory
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh  # Sécuriser le dossier
 
+      # Vérification de l'accessibilité du serveur
       - name: Check if SSH server is reachable
         run: |
           echo "🔍 Vérification de l'accessibilité du serveur..."
@@ -55,18 +55,19 @@ jobs:
               exit 1
           fi
 
-      # Ajouter la clé publique du serveur à known_hosts
-      - name: Add server to known_hosts
-        run: |
-          echo "🔍 Ajouter la clé du serveur à known_hosts"
-          ssh-keyscan -H 192.168.2.34 >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts  # Lecture autorisée pour éviter certains warnings
-
+      # Test de la connexion SSH
       - name: Test SSH connection
-        run: ssh -vvv -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa user@192.168.2.34 "echo '✅ SSH connection successful'"
-
-      # Vérifier la connexion SSH
-      - name: SSH Test
         run: |
           echo "🔍 Test de la connexion SSH"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa user@192.168.2.34 "echo '✅ SSH connection successful'"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa webgrp04@192.168.2.34 "echo '✅ SSH connection successful'"
+
+      # Commande de déploiement sur le serveur distant
+      - name: Deploy Application
+        run: |
+          echo "🔍 Lancement du déploiement"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa webgrp04@192.168.2.34 << 'EOF'
+            # Remplace ceci par tes propres commandes de déploiement
+            cd /path/to/application
+            git pull origin main
+            ./deploy.sh
+          EOF
