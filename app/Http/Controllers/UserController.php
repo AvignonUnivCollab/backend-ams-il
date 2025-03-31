@@ -38,8 +38,9 @@ class UserController extends Controller
             'username' => 'required|string|max:50|unique:users',
             'email' => 'required|string|email|max:50|unique:users',
             'password' => 'required|string|min:6',
-            'role' => 'required|in:user,admin,moderateur',
+            'role' => 'required|in:user,admin,moderator',
         ]);
+
 
         DB::table('users')->insert([
             'name' => $request->name,
@@ -71,7 +72,7 @@ class UserController extends Controller
             'name' => 'required|string|max:50',
             'username' => 'required|string|max:50|unique:users,username,' . $id,
             'email' => 'required|string|email|max:50|unique:users,email,' . $id,
-            'role' => 'required|in:user,admin,moderateur',
+            'role' => 'required|in:user,admin,moderator',
         ]);
 
         DB::table('users')

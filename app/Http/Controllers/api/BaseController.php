@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class BaseController extends Controller
 {
@@ -46,4 +48,22 @@ class BaseController extends Controller
 
         return response()->json($response, $code);
     }
+
+    public function authenticate(Request $request)
+    {
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return $this->sendError('Token not provided.', 401);
+        }
+
+        $user = JWTAuth::setToken($token)->authenticate();
+
+        if (!$user) {
+            return $this->sendError('Unauthorised.', 401);
+        }
+
+        return $user;
+    }
+
 }

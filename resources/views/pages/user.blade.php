@@ -135,7 +135,7 @@
                                 required>
                                 <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>Utilisateur</option>
                                 <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrateur</option>
-                                <option value="editor" {{ old('role') == 'moderateur' ? 'selected' : '' }}>Modérateur</option>
+                                <option value="moderator" {{ old('role') == 'moderator' ? 'selected' : '' }}>Modérateur</option>
                             </select>
                             @error('role')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -214,7 +214,7 @@
                                     required>
                                     <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>Utilisateur</option>
                                     <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrateur</option>
-                                    <option value="editor" {{ old('role') == 'moderateur' ? 'selected' : '' }}>Modérateur</option>
+                                    <option value="moderator" {{ old('role') == 'moderator' ? 'selected' : '' }}>Modérateur</option>
                                 </select>
                                 @error('role')
                                 <div class="invalid-feedback">{{ $message }}</div>

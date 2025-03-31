@@ -31,7 +31,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('pages.message') }}">
                 <i class="icon-bar-graph menu-icon"></i>
                 <span class="menu-title">Commentaires</span>
             </a>

@@ -71,6 +71,7 @@ class AuthController extends BaseController
             'username' => 'required|string|max:30|unique:users',
             'email' => 'required|string|email|max:30|unique:users',
             'password' => 'required|string|min:6',
+            'role' => 'required|in:user,admin,moderator',
         ]);
 
         if ($validator->fails()) {
@@ -86,6 +87,7 @@ class AuthController extends BaseController
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
+            'role' => $request->role,
             'password' => Hash::make($request->password),
             'created_at' => now(),
             'updated_at' => now(),
@@ -136,10 +138,19 @@ class AuthController extends BaseController
         }
     }
 
-    public function currentUser()
+    public function me(Request $request)
     {
+        $user = $this->authenticate($request);
+
+        if (!$user) {
+            return $this->sendError(
+                'Unauthorised.',
+                401
+            );
+        }
+
         return $this->sendResponse([
-            'user' => Auth::user(),
+            'user' => $user,
         ], 'User retrieved successfully.');
     }
 

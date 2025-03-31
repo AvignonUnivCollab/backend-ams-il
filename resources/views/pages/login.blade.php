@@ -72,6 +72,8 @@
                                 <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">Se connecter</button>
                             </div>
 
+                            <div class="text-center mt-4 font-weight-light"> Vous n'avez pas de compte ? <a href="{{ route('pages.register') }}" class="text-primary">S'enregistrer</a>
+                            </div>
                         </form>
                     </div>
                 </div>
