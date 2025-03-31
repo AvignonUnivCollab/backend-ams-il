@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Deploy Laravel to Server
 
 on:
   push:
@@ -20,4 +20,14 @@ jobs:
 
     - name: Deploy to server
       run: |
-        ssh -o StrictHostKeyChecking=no webgrp04@192.168.2.34 "cd /backend-ams-il && git pull origin main"
+        ssh -o StrictHostKeyChecking=no webgrp04@192.168.2.34 << 'EOF'
+          cd backend-ams-il
+          git pull origin main
+          composer install --no-dev --optimize-autoloader
+          php artisan migrate --force
+          php artisan config:clear && php artisan cache:clear && php artisan route:clear
+          php artisan storage:link
+          chmod -R 775 storage bootstrap/cache
+          chown -R www-data:www-data storage bootstrap/cache
+          sudo systemctl restart apache2  
+        EOF
