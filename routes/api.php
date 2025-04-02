@@ -43,6 +43,8 @@ Route::post('/room/{roomId}/leave', [RoomController::class, 'leave'])->middlewar
 Route::post('room/{roomId}/join', [RoomController::class, 'join'])->middleware('throttle:5,1');
 
 
+
+
 Route::get('/videos/{roomId}', [VideoController::class, 'index'])->middleware('throttle:5,1');
 
 Route::middleware('jwt.auth')->get('/messages/{roomId}', [MessageController::class, 'index'])->middleware('throttle:5,1');
