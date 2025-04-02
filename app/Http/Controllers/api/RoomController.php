@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RoomResource;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\UserRoom;
@@ -18,18 +19,28 @@ class RoomController extends BaseController
         $rooms = Room::join('users', 'rooms.host_id', '=', 'users.id')
             ->leftJoin('user_room', 'rooms.id', '=', 'user_room.room_id')
             ->leftJoin('messages', 'rooms.id', '=', 'messages.room_id')
+            ->join('videos', 'videos.id', '=', 'rooms.current_video_id')
             ->select(
                 'rooms.id',
                 'rooms.name',
                 'rooms.thumbnail',
+                'videos.url as video_url',
+                'videos.thumbnail as video_thumbnail',
                 'rooms.created_at',
                 'users.name as host_name',
                 DB::raw('COUNT(DISTINCT user_room.id) as user_count'),
                 DB::raw('COUNT(DISTINCT messages.id) as message_count')
             )
-            ->groupBy('rooms.id', 'rooms.name', 'rooms.thumbnail', 'rooms.created_at', 'users.name')
+            ->groupBy('rooms.id', 'rooms.name', 'rooms.thumbnail', 'rooms.created_at', 'video_url', 'video_thumbnail','users.name')
             ->orderBy('rooms.created_at', 'desc')
             ->get();
+
+        $rooms->transform(function ($room) {
+            $room->thumbnail = asset('storage/' . $room->thumbnail);
+            $room->video_url = asset('storage/' . $room->video_url);
+            $room->video_thumbnail = asset('storage/' . $room->video_thumbnail);
+            return $room;
+        });
 
         return $this
             ->sendResponse(
@@ -38,6 +49,20 @@ class RoomController extends BaseController
             );
     }
 
+    public function show(Request $request, $roomId)
+    {
+        $user = $this->authenticate($request);
+
+        if (!$user) {
+            return $this->sendError(
+                'Unauthorised.',
+                401
+            );
+        }
+
+        $room = Room::with(['host', 'users', 'videos','currentVideo', 'messages.sender'])->findOrFail($roomId);
+        return new RoomResource($room);
+    }
 
     public function join(Request $request, $roomId)
     {

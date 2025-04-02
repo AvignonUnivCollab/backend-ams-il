@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Room extends Model
 {
     use HasFactory;
-
     protected $fillable = ['name', 'description', 'thumbnail', 'host_id', 'current_video_id', 'is_playing'];
 
     public function playlist()
@@ -38,6 +37,14 @@ class Room extends Model
     {
         return $this->belongsTo(User::class, 'host_id');
     }
+
+    // App\Models\Room.php
+
+    public function currentVideo()
+    {
+        return $this->belongsTo(Video::class, 'current_video_id');
+    }
+
 
     public function getTotalViewsAttribute()
     {

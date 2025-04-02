@@ -35,6 +35,12 @@ class VideoController extends Controller
             ->where('rv.room_id', $roomId)
             ->get();
 
+        $videos->transform(function ($video) {
+            $video->thumbnail = asset('storage/' . $video->thumbnail);
+            $video->url = asset('storage/' . $video->url);
+            return $video;
+        });
+
         $categories = Category::all();
 
         return view('pages.video', compact('videos', 'categories'));
@@ -54,8 +60,6 @@ class VideoController extends Controller
             'duration' => 'required|integer',
             'room_id' => 'required|exists:rooms,id', // S'assurer que l'ID existe vraiment
         ]);
-
-        $roomId = Room::find($request->room_id)->id;
 
         $thumbnailPath = null;
         if ($request->hasFile('thumbnail')) {
@@ -85,6 +89,8 @@ class VideoController extends Controller
         ]);
 
         // Ajouter la vidéo dans la table pivot pour la salle
+        Room::where('id', $request->room_id)->update(['current_video_id' => $video->id]);
+
         $room = Room::findOrFail($request->room_id);
         $room->videos()->attach($video->id);
 

@@ -85,59 +85,30 @@
                                     <th>Vidéo</th>
                                     <th>Titre</th>
                                     <th>Description</th>
-                                    <th>Source</th>
-                                    <th>Status</th>
+                                    <th>Catégories</th>
+                                    <th>Host</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>
-                                        <iframe width="220" height="90" src="https://www.youtube.com/embed/tgbNymZ7vqY"
-                                                style="border-radius: 15px; overflow: hidden; border: none;"></iframe>
-                                    </td>
-                                    <td>Search Engine Marketing</td>
-                                    <td class="font-weight-bold">$362</td>
-                                    <td>21 Sep 2018</td>
-                                    <td class="font-weight-medium">
-                                        <div class="badge badge-success">Completed</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <iframe width="220" height="90" src="https://www.youtube.com/embed/tgbNymZ7vqY"
-                                                style="border-radius: 15px; overflow: hidden; border: none;"></iframe>
-                                    </td>
-                                    <td>Search Engine Optimization</td>
-                                    <td class="font-weight-bold">$116</td>
-                                    <td>13 Jun 2018</td>
-                                    <td class="font-weight-medium">
-                                        <div class="badge badge-success">Completed</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <iframe width="220" height="90" src="https://www.youtube.com/embed/tgbNymZ7vqY"
-                                                style="border-radius: 15px; overflow: hidden; border: none;"></iframe>
-                                    </td>
-                                    <td>Display Advertising</td>
-                                    <td class="font-weight-bold">$551</td>
-                                    <td>28 Sep 2018</td>
-                                    <td class="font-weight-medium">
-                                        <div class="badge badge-warning">Pending</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <iframe width="220" height="90" src="https://www.youtube.com/embed/tgbNymZ7vqY"
-                                                style="border-radius: 15px; overflow: hidden; border: none;"></iframe>
-                                    </td>
-                                    <td>Pay Per Click Advertising</td>
-                                    <td class="font-weight-bold">$523</td>
-                                    <td>30 Jun 2018</td>
-                                    <td class="font-weight-medium">
-                                        <div class="badge badge-warning">Pending</div>
-                                    </td>
-                                </tr>
+                                @foreach($data['videos'] as $video)
+                                    <tr>
+                                        <td>
+                                            <img
+                                                width="220"
+                                                height="90"
+                                                src="{{ asset('storage/' . $video->thumbnail) }}"
+                                                alt="Image"
+                                                style="border-radius: 15px; overflow: hidden; border: none;">
+
+                                        </td>
+                                        <td>{{$video->video_name}}</td>
+                                        <td class="font-weight-bold">{{$video->description}}</td>
+                                        <td>{{$video->category_name}}</td>
+                                        <td class="font-weight-medium">
+                                            <div class="badge badge-success">{{$video->username}}</div>
+                                        </td>
+                                    </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -147,72 +118,44 @@
             <div class="col-md-5 stretch-card grid-margin">
                 <div class="card">
                     <div class="card-body">
-                        <p class="card-title">Commentaires</p>
+                        <p class="card-title">Commentaries</p>
                         <ul class="icon-data-list">
-                            <li>
-                                <div class="d-flex">
-                                    <img src="assets/images/faces/face1.jpg" alt="user">
-                                    <div>
-                                        <p class="text-info mb-1">Isabella Becker</p>
-                                        <p class="mb-0">Sales dashboard have been created</p>
-                                        <small>9:30 am</small>
+                            @foreach($data['messages'] as $message)
+                                <li>
+                                    <div class="d-flex">
+                                        <div>
+                                            <p class="text-info mb-1">{{ $message->username }}</p>
+                                            <p class="mb-0">{{ $message->content }}</p>
+                                            <small>{{$message->created_at}}</small>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="d-flex">
-                                    <img src="assets/images/faces/face2.jpg" alt="user">
-                                    <div>
-                                        <p class="text-info mb-1">Adam Warren</p>
-                                        <p class="mb-0">You have done a great job #TW111</p>
-                                        <small>10:30 am</small>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="d-flex">
-                                    <img src="assets/images/faces/face3.jpg" alt="user">
-                                    <div>
-                                        <p class="text-info mb-1">Leonard Thornton</p>
-                                        <p class="mb-0">Sales dashboard have been created</p>
-                                        <small>11:30 am</small>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="d-flex">
-                                    <img src="assets/images/faces/face4.jpg" alt="user">
-                                    <div>
-                                        <p class="text-info mb-1">George Morrison</p>
-                                        <p class="mb-0">Sales dashboard have been created</p>
-                                        <small>8:50 am</small>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="d-flex">
-                                    <img src="assets/images/faces/face5.jpg" alt="user">
-                                    <div>
-                                        <p class="text-info mb-1">Ryan Cortez</p>
-                                        <p class="mb-0">Herbs are fun and easy to grow.</p>
-                                        <small>9:00 am</small>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="d-flex">
-                                    <img src="assets/images/faces/face1.jpg" alt="user">
-                                    <div>
-                                        <p class="text-info mb-1">Isabella Becker</p>
-                                        <p class="mb-0">Sales dashboard have been created</p>
-                                        <small>9:30 am</small>
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <style>
+        .host-icon {
+                position: absolute;
+                bottom: 25px;
+                right: 10px;
+                background-color: rgba(255, 0, 0, 0.67);
+                color: white;
+                font-weight: bold;
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+    </style>
 @endsection
