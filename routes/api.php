@@ -5,6 +5,7 @@ use App\Http\Controllers\api\CategoryController;
 use App\Http\Controllers\api\MessageController;
 use App\Http\Controllers\api\RoomController;
 use App\Http\Controllers\api\UserRoomController;
+use App\Http\Controllers\VideoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use L5Swagger\Http\Controllers\SwaggerController;
@@ -36,9 +37,13 @@ Route::get('categories', [CategoryController::class, 'index'])->middleware('thro
 Route::get('/categories/{id}', [CategoryController::class, 'show'])->middleware('throttle:5,1');
 
 Route::get('/rooms', [RoomController::class, 'index'])->middleware('throttle:5,1');
+Route::get('/rooms/{roomId}', [RoomController::class, 'show'])->middleware('throttle:5,1');
 Route::get('/user-rooms', [UserRoomController::class, 'rooms_join'])->middleware('throttle:5,1');
 Route::post('/room/{roomId}/leave', [RoomController::class, 'leave'])->middleware('throttle:5,1');
 Route::post('room/{roomId}/join', [RoomController::class, 'join'])->middleware('throttle:5,1');
+
+
+Route::get('/videos/{roomId}', [VideoController::class, 'index'])->middleware('throttle:5,1');
 
 Route::middleware('jwt.auth')->get('/messages/{roomId}', [MessageController::class, 'index'])->middleware('throttle:5,1');
 Route::middleware('jwt.auth')->get('me', [AuthController::class, 'me'])->middleware('throttle:5,1');
