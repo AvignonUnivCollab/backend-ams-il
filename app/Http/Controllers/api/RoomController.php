@@ -16,30 +16,53 @@ class RoomController extends BaseController
 
     public function index()
     {
+
         $rooms = Room::join('users', 'rooms.host_id', '=', 'users.id')
-            ->leftJoin('user_room', 'rooms.id', '=', 'user_room.room_id')
-            ->leftJoin('messages', 'rooms.id', '=', 'messages.room_id')
-            ->join('videos', 'videos.id', '=', 'rooms.current_video_id')
-            ->select(
-                'rooms.id',
-                'rooms.name',
-                'rooms.thumbnail',
-                'videos.url as video_url',
-                'videos.thumbnail as video_thumbnail',
-                'rooms.created_at',
-                'users.name as host_name',
-                DB::raw('COUNT(DISTINCT user_room.id) as user_count'),
-                DB::raw('COUNT(DISTINCT messages.id) as message_count')
-            )
-            ->groupBy('rooms.id', 'rooms.name', 'rooms.thumbnail', 'rooms.created_at', 'video_url', 'video_thumbnail','users.name')
-            ->orderBy('rooms.created_at', 'desc')
-            ->get();
+                ->leftJoin('messages', 'rooms.id', '=', 'messages.room_id')
+                ->leftJoin('videos', 'videos.id', '=', 'rooms.current_video_id')
+                ->leftJoin('user_room', 'rooms.id', '=', 'user_room.room_id')
+                ->select(
+                    'rooms.id',
+                    'rooms.name',
+                    'rooms.name',
+                    'rooms.description',
+                    'rooms.thumbnail',
+                    'videos.url as video_url',
+                    'videos.thumbnail as video_thumbnail',
+                    'rooms.created_at',
+                    'users.name as host_name',
+                    DB::raw('COUNT(DISTINCT messages.id) as message_count'),
+                    DB::raw('COUNT(DISTINCT user_room.id) as user_count'),
+                )
+                ->groupBy(
+                    'rooms.id', 
+                    'rooms.name', 
+                    'rooms.description',
+                    'rooms.thumbnail', 
+                    'video_url', 
+                    'video_thumbnail',
+                    'rooms.created_at',
+                    'host_name')
+                ->orderBy('rooms.created_at', 'desc')
+                ->get();
 
         $rooms->transform(function ($room) {
-            $room->thumbnail = asset('storage/' . $room->thumbnail);
-            $room->video_url = asset('storage/' . $room->video_url);
-            $room->video_thumbnail = asset('storage/' . $room->video_thumbnail);
-            return $room;
+                $room->thumbnail = asset('storage/' . $room->thumbnail);
+                
+                if($room->video_url != null) {
+                    $room->video_url = asset('storage/' . $room->video_url);
+                } else  {
+                    $room->video_url = null;
+                } 
+
+                
+                if($room->video_thumbnail != null) {
+                    $room->video_thumbnail = asset('storage/' . $room->video_thumbnail);
+                } else {
+                    $room->video_thumbnail = null;
+                } 
+                
+             return $room;
         });
 
         return $this
