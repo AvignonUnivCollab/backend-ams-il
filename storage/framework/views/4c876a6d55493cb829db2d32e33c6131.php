@@ -1,6 +1,4 @@
-@extends('layout')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-12 grid-margin">
@@ -32,23 +30,23 @@
 
 
         <div class="row mt-0">
-	    @if ($errors->any())
+	    <?php if($errors->any()): ?>
     		<div class="alert alert-danger">
         	   <ul>
-            		@foreach ($errors->all() as $error)
-                	  <li>{{ $error }}</li>
-            		@endforeach
+            		<?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                	  <li><?php echo e($error); ?></li>
+            		<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         	   </ul>
     		</div>
-	    @endif
+	    <?php endif; ?>
 
 
-            @if ($videos->isEmpty())
+            <?php if($videos->isEmpty()): ?>
                 <tr>
                     <td colspan="3" class="text-center text-muted fw-bold fs-5">Aucune vidéos disponible.</td>
                 </tr>
-            @else
-                @foreach ($videos as $video)
+            <?php else: ?>
+                <?php $__currentLoopData = $videos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $video): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                     <div class="col-md-3 mt-4">
                         <div class="card">
@@ -57,7 +55,7 @@
                                     <source
                                         width="280"
                                         height="150"
-                                        src="{{ asset('storage/' . $video->url) }}"
+                                        src="<?php echo e(asset('storage/' . $video->url)); ?>"
                                         style="border-radius: 15px; overflow: hidden; border: none;"
                                         type="video/mp4">
                                     Votre navigateur ne supporte pas ce format de video
@@ -69,19 +67,19 @@
                                 </div>
                             </div>
                             <div class="card-body text-left">
-                                <h5 class="card-title"> {{ $video->title }} </h5>
-                                <p class="card-text"> {{ $video->description }}</p>
+                                <h5 class="card-title"> <?php echo e($video->title); ?> </h5>
+                                <p class="card-text"> <?php echo e($video->description); ?></p>
                             </div>
 
                             <!-- Icône de modification -->
                             <div class="edit-icon" data-bs-toggle="modal"
-                                 data-bs-target="#updateSalonModal-{{ $video->id }}">
+                                 data-bs-target="#updateSalonModal-<?php echo e($video->id); ?>">
                                 <i class="fas fa-edit text-white-50" style="font-size: 14px;"></i>
                             </div>
                         </div>
                     </div>
-                @endforeach
-            @endif
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -95,11 +93,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('videos.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @php $roomId = request()->query('id') @endphp
+                    <form action="<?php echo e(route('videos.store')); ?>" method="POST" enctype="multipart/form-data">
+                        <?php echo csrf_field(); ?>
+                        <?php $roomId = request()->query('id') ?>
                         <!-- Champ caché pour l'ID de la salle -->
-                        <input type="hidden" name="room_id" value="{{ $roomId }}">
+                        <input type="hidden" name="room_id" value="<?php echo e($roomId); ?>">
 
                         <div class="form-group mb-3">
                             <label>Image de fond</label>
@@ -119,7 +117,7 @@
                         </div>
 
 
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <div class="form-group mb-3">
                             <label>Vidéo</label>
                             <input type="file" name="url" class="file-upload-default d-none" accept="video/*">
@@ -148,26 +146,40 @@
                                 class="form-control"
                                 id="title"
                                 name="title" required>
-                            @error('title')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="mb-3">
                             <label for="category_id" class="form-label">Catégorie</label>
                             <select class="form-control" id="category_id" name="category_id" required>
                                 <option value="">Sélectionnez une catégorie</option>
-                                @if(isset($categories) && $categories->count() > 0)
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                @else
+                                <?php if(isset($categories) && $categories->count() > 0): ?>
+                                    <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($category->id); ?>"><?php echo e($category->name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php else: ?>
                                     <option value="" disabled>Aucune catégorie disponible</option>
-                                @endif
+                                <?php endif; ?>
                             </select>
-                            @error('category_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <?php $__errorArgs = ['category_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
 
@@ -183,9 +195,16 @@
                                 rows="3"
                                 required>
                             </textarea>
-                            @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <?php $__errorArgs = ['description'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="mb-3">
@@ -198,9 +217,16 @@
                                 class="form-control"
                                 id="duration"
                                 name="duration" required>
-                            @error('duration')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <?php $__errorArgs = ['duration'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="mt-4 d-grid gap-2">
@@ -387,4 +413,6 @@
         }
 
     </style>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/webgrp04/backend-ams-il/resources/views/pages/video.blade.php ENDPATH**/ ?>
