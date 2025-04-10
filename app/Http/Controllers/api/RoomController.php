@@ -33,6 +33,7 @@ class RoomController extends BaseController
                     'users.name as host_name',
                     DB::raw('COUNT(DISTINCT messages.id) as message_count'),
                     DB::raw('COUNT(DISTINCT user_room.id) as user_count'),
+                    DB::raw('COUNT(DISTINCT videos.id) as video_count'),
                 )
                 ->groupBy(
                     'rooms.id', 
