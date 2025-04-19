@@ -29,7 +29,20 @@
             </div>
         </div>
 
+
+
         <div class="row mt-0">
+	    @if ($errors->any())
+    		<div class="alert alert-danger">
+        	   <ul>
+            		@foreach ($errors->all() as $error)
+                	  <li>{{ $error }}</li>
+            		@endforeach
+        	   </ul>
+    		</div>
+	    @endif
+
+
             @if ($videos->isEmpty())
                 <tr>
                     <td colspan="3" class="text-center text-muted fw-bold fs-5">Aucune vidéos disponible.</td>

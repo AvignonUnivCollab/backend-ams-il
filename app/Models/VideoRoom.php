@@ -9,7 +9,7 @@ class VideoRoom extends Model
 {
     use HasFactory;
 
-    protected $table = 'video_room';
+    protected $table = 'room_video';
     protected $fillable = [
         'video_id',
         'room_id',
