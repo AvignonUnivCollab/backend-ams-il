@@ -71,7 +71,7 @@ class AuthController extends BaseController
             'username' => 'required|string|max:30|unique:users',
             'email' => 'required|string|email|max:30|unique:users',
             'password' => 'required|string|min:6',
-            'role' => 'required|in:user,admin,moderator',
+            'role' => 'in:user,admin,moderator',
         ]);
 
         if ($validator->fails()) {
@@ -83,11 +83,13 @@ class AuthController extends BaseController
                 );
         }
 
+        $role = $request->input('role', 'user');
+
         $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'role' => $request->role,
+            'role' => $role,
             'password' => Hash::make($request->password),
             'created_at' => now(),
             'updated_at' => now(),
