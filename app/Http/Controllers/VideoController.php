@@ -36,6 +36,7 @@ class VideoController extends Controller
                 'videos.title',
                 'videos.description',
                 'videos.url',
+                'videos.is_youtube',
                 'videos.thumbnail',
                 'videos.duration',
                 'categories.name',
@@ -46,7 +47,11 @@ class VideoController extends Controller
 
         $videos->transform(function ($video) {
             $video->thumbnail = asset('storage/' . $video->thumbnail);
-            $video->url = asset('storage/' . $video->url);
+
+            if($video->is_youtube == 0) {
+                $video->url = asset('storage/' . $video->url);
+            }
+
             return $video;
         });
 
@@ -59,16 +64,24 @@ class VideoController extends Controller
 
     public function store(Request $request)
 {
+    $isYouTube = $request->has('is_youtube') && $request->input('is_youtube') == 1;
     // Validate the request
-    $request->validate([
+    $rules = [
         'title' => 'required|string|max:60',
         'description' => 'required|string',
-        'url' => 'required|mimes:mp4,mov,avi', // Limit the file type
         'category_id' => 'required|integer',
         'thumbnail' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         'duration' => 'required|integer',
-        'room_id' => 'required|exists:rooms,id', // Ensure room ID exists
-    ]);
+        'room_id' => 'required|exists:rooms,id',
+    ];
+
+    if ($isYouTube) {
+        $rules['url'] = 'required|url|starts_with:https://www.youtube.com';
+    } else {
+        $rules['url'] = 'required|mimes:mp4,mov,avi';
+    }
+
+    $request->validate($rules);
 
     // Handle thumbnail upload
     $thumbnailPath = null;
@@ -81,12 +94,16 @@ class VideoController extends Controller
     }
 
     
-    $compressedVideo = null;
-    if ($request->hasFile('url')) {
-        $compressedVideo = $this->videoCompressionService->compress($request->file('url'));
+    $videoPath = null;
 
-        // Ensure the compressed video is saved to the 'videos' folder
-        $videoPath = $compressedVideo->store('videos', 'public'); 
+    if ($isYouTube) {
+        // Pour une vidéo YouTube, on sauvegarde juste l'URL
+        $videoPath = $request->url;
+    } else {
+        if ($request->hasFile('url')) {
+            $compressedVideo = $this->videoCompressionService->compress($request->file('url'));
+            $videoPath = $compressedVideo->store('videos', 'public');
+        }
     }
 
     // Store video data in the database
@@ -94,6 +111,7 @@ class VideoController extends Controller
         'title' => $request->title,
         'description' => $request->description,
         'url' => $videoPath, 
+        'is_youtube' => $isYouTube,
         'category_id' => $request->category_id,
         'thumbnail' => $thumbnailPath,
         'duration' => $request->duration,

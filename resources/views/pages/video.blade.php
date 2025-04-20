@@ -49,23 +49,40 @@
                 </tr>
             @else
                 @foreach ($videos as $video)
+                    @php
+                        $videoId = null;
+                        if (filter_var($video->url, FILTER_VALIDATE_URL)) {
+                            parse_str(parse_url($video->url, PHP_URL_QUERY), $query);
+                            $videoId = $query['v'] ?? null;
+                        }
+                    @endphp
 
                     <div class="col-md-3 mt-4">
                         <div class="card">
                             <div class="position-relative">
-                                <video width="320" height="240" autoplay muted>
-                                    <source
-                                        width="280"
-                                        height="150"
-                                        src="{{ asset('storage/' . $video->url) }}"
-                                        style="border-radius: 15px; overflow: hidden; border: none;"
-                                        type="video/mp4">
-                                    Votre navigateur ne supporte pas ce format de video
-                                </video>
+                                @if($video->is_youtube == 0)
+                                    <video width="320" height="240" autoplay muted>
+                                        <source
+                                            width="280"
+                                            height="150"
+                                            src="{{ asset('storage/' . $video->url) }}"
+                                            style="border-radius: 15px; overflow: hidden; border: none;"
+                                            type="video/mp4">
+                                        Votre navigateur ne supporte pas ce format de video
+                                    </video>
+                                @else 
+                                    @if ($videoId)
+                                    <iframe width="320" height="240"
+                                        src="https://www.youtube.com/embed/{{ $videoId }}"
+                                        frameborder="0"
+                                        allowfullscreen>
+                                    </iframe>
+                                    @else
+                                        <p>Impossible de lire la vidéo.</p>
+                                    @endif
+                                @endif
                                 <div class="play-icon">
-                                    <button type="button" class="btn btn-primary btn-rounded btn-icon">
-                                        <i class="fas fa-play"></i>
-                                    </button>
+                                    
                                 </div>
                             </div>
                             <div class="card-body text-left">
@@ -91,7 +108,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addSalonModalLabel">Ajouter un Salon</h5>
+                    <h5 class="modal-title" id="addSalonModalLabel">Ajouter un video</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -117,10 +134,31 @@
                                      style="max-width: 200px; height: 150px;">
                             </div>
                         </div>
-
-
-                        @csrf
+                      
                         <div class="form-group mb-3">
+                            <label class="form-label d-block mb-2">Est-ce une vidéo YouTube ?</label>
+                            <div class="d-flex gap-4 p-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_youtube" id="youtube_yes" value="1">
+                                    <label class="form-check-label" for="youtube_yes">Oui</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_youtube" id="youtube_no" value="0" checked>
+                                    <label class="form-check-label" for="youtube_no">Non</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        <!-- Champ URL YouTube -->
+                        <div class="form-group mb-3 d-none" id="youtube-url-group">
+                            <label for="youtube_url">Lien YouTube</label>
+                            <input type="text" class="form-control" id="youtube_url" name="url" placeholder="https://www.youtube.com/watch?v=..." />
+                        </div>
+
+                        <!-- Champ Upload Vidéo -->
+                        @csrf
+                        <div class="form-group mb-3" id="upload-video-group">
                             <label>Vidéo</label>
                             <input type="file" name="url" class="file-upload-default d-none" accept="video/*">
                             <div class="input-group col-xs-12 d-flex align-items-center">
@@ -219,6 +257,28 @@
 
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const youtubeYes = document.getElementById('youtube_yes');
+            const youtubeNo = document.getElementById('youtube_no');
+            const youtubeUrlGroup = document.getElementById('youtube-url-group');
+            const uploadVideoGroup = document.getElementById('upload-video-group');
+
+            function toggleVideoInputs() {
+                if (youtubeYes.checked) {
+                    youtubeUrlGroup.classList.remove('d-none');
+                    uploadVideoGroup.classList.add('d-none');
+                } else {
+                    youtubeUrlGroup.classList.add('d-none');
+                    uploadVideoGroup.classList.remove('d-none');
+                }
+            }
+
+            youtubeYes.addEventListener('change', toggleVideoInputs);
+            youtubeNo.addEventListener('change', toggleVideoInputs);
+
+            toggleVideoInputs(); // appel initial
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".file-upload-browse").forEach(function (button) {
                 button.addEventListener("click", function () {
