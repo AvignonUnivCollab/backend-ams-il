@@ -14,8 +14,16 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class RoomController extends BaseController
 {
 
-    public function index()
+    public function index(Request $request)
     {
+        $user = $this->authenticate($request);
+
+        if (!$user) {
+            return $this->sendError(
+                'Unauthorised.',
+                401
+            );
+        }
 
         $rooms = Room::join('users', 'rooms.host_id', '=', 'users.id')
                 ->leftJoin('messages', 'rooms.id', '=', 'messages.room_id')
@@ -47,24 +55,20 @@ class RoomController extends BaseController
                 ->orderBy('rooms.created_at', 'desc')
                 ->get();
 
-        $rooms->transform(function ($room) {
-                $room->thumbnail = asset('storage/' . $room->thumbnail);
+                $rooms->transform(function ($room) use ($user) {
+                    $room->thumbnail = asset('storage/' . $room->thumbnail);
                 
-                if($room->video_url != null) {
-                    $room->video_url = asset('storage/' . $room->video_url);
-                } else  {
-                    $room->video_url = null;
-                } 
-
+                    $room->video_url = $room->video_url ? asset('storage/' . $room->video_url) : null;
+                    $room->video_thumbnail = $room->video_thumbnail ? asset('storage/' . $room->video_thumbnail) : null;
                 
-                if($room->video_thumbnail != null) {
-                    $room->video_thumbnail = asset('storage/' . $room->video_thumbnail);
-                } else {
-                    $room->video_thumbnail = null;
-                } 
+                    $room->is_joined = DB::table('user_room')
+                        ->where('room_id', $room->id)
+                        ->where('user_id', $user->id)
+                        ->exists();
                 
-             return $room;
-        });
+                    return $room;
+                });
+                
 
         return $this
             ->sendResponse(
@@ -163,7 +167,7 @@ class RoomController extends BaseController
         if (!$user->rooms()->where('rooms.id', $roomId)->exists()) {
             return $this
                 ->sendError(
-                    'Room is already joined.',
+                    'Room is already leaved.',
                     400
                 );
         }
