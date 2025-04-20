@@ -180,4 +180,29 @@ class RoomController extends BaseController
                 'Room leave successfully.'
             );
     }
+
+    public function store(Request $request)
+    {
+        // Validez la requete
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'videoUrl' => 'required|url', // Valider URL 
+        ]);
+
+        // Creer Room
+        $room = Room::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? '',
+            'videoUrl' => $validated['videoUrl'],  // Save the video URL to the database
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $room,
+            'message' => 'Room created successfully.',
+        ]);
+    }
+
 }
+
