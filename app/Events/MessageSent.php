@@ -22,6 +22,7 @@ class MessageSent implements ShouldBroadcast
     {
         //
         $this->message = $message;
+        \Log::info('Broadcasting message to room: ' . $message->room_id);
     }
 
     /**
@@ -32,14 +33,22 @@ class MessageSent implements ShouldBroadcast
     // Canal sur lequel l'événement sera diffusé
     public function broadcastOn(): array
     {
-        return [
-            new Channel('chat'),
-        ];
+        return [new Channel('room-' . $this->message->room_id)];
     }
 
     // Nom de l'événement frontend
     public function broadcastAs(): string
     {
         return 'message-sent';
+    }
+
+    public function broadcastWith()
+    {
+        return [
+            'message' => $this->message->content,
+            'sender_name' => $this->message->sender->name,
+            'room_id' => $this->message->room_id,
+            'sent_at' => $this->message->created_at,
+        ];
     }
 }

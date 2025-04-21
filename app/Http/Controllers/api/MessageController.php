@@ -46,7 +46,7 @@ class MessageController extends BaseController
         }
 
         $messages = Message::join('rooms', 'rooms.id', '=', 'messages.room_id')
-            ->join('users', 'users.id', '=', 'rooms.host_id')
+            ->join('users', 'users.id', '=', 'messages.sender_id')
             ->select(
                 'messages.content',
                 'messages.created_at as sent_at',
@@ -92,7 +92,8 @@ class MessageController extends BaseController
             'content' => $request->message
         ]);
 
-        broadcast(new MessageSent($message->content))->to('room-' . $room_id);
+        $message->load('sender');
+        broadcast(new MessageSent($message));
 
         Log::info('Message broadcasted', ['message' => $message]);
 
