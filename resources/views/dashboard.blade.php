@@ -35,8 +35,8 @@
                     <div class="col-md-6 mb-4 stretch-card transparent">
                         <div class="card card-tale">
                             <div class="card-body">
-                                <p class="mb-4">Total de vidéos</p>
-                                <p class="fs-30 mb-2">{{ $data['videoCount'] }}</p>
+                                <p class="mb-4">Total utilisateur</p>
+                                <p class="fs-30 mb-2">{{ $data['userCount'] }}</p>
                                 <p>10.00% (30 jours)</p>
                             </div>
                         </div>
@@ -55,8 +55,8 @@
                     <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
                         <div class="card card-light-blue">
                             <div class="card-body">
-                                <p class="mb-4">vidéos playslists</p>
-                                <p class="fs-30 mb-2">{{ $data['playlistCount'] }}</p>
+                                <p class="mb-4">Total de vidéos</p>
+                                <p class="fs-30 mb-2">{{ $data['videoCount'] }}</p>
                                 <p>2.00% (30 jours)</p>
                             </div>
                         </div>

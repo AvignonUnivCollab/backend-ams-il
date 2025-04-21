@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use App\Models\Playlist;
 use App\Models\Room;
+use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoRoom;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ class DashboardController extends Controller
         $playlistCount = Playlist::count();
         $messageCount = Message::count();
         $salonCount = Room::count();
+        $userCount = User::count();
 
         $user = Auth::user();
 
@@ -54,6 +56,7 @@ class DashboardController extends Controller
             'playlistCount' => $playlistCount,
             'messageCount' => $messageCount,
             'salonCount' => $salonCount,
+            'userCount' => $userCount,
             'user' => $user,
             'messages' => $messages,
             'videos' => $videos,
