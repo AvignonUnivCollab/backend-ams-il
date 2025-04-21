@@ -31,7 +31,7 @@ Route::get('/docs', [SwaggerController::class, 'api'])->name('l5-swagger.api');
 
 Route::middleware('jwt.auth')->get('/messages/{roomId}', [MessageController::class, 'index'])->middleware('throttle:5,1');
 Route::middleware('jwt.auth')->get('me', [AuthController::class, 'me'])->middleware('throttle:5,1');
-Route::post('/sent-message/{roomId}', [MessageController::class, 'store'])->middleware('throttle:5,1');
+
 
 Route::middleware('auth:jwt')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -53,6 +53,8 @@ Route::middleware(['cors'])->group(function () {
         Route::post('/room/{roomId}/leave', [RoomController::class, 'leave'])->middleware('throttle:5,1');
         Route::post('room/{roomId}/join', [RoomController::class, 'join'])->middleware('throttle:5,1');
         Route::get('/rooms/{roomId}', [RoomController::class, 'show'])->middleware('throttle:5,1');
+
+        Route::post('/send-message/{roomId}', [MessageController::class, 'store'])->middleware('throttle:5,1');
     });
 
 

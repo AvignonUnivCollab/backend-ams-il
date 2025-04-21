@@ -26,10 +26,7 @@ class UserController extends Controller
     }
 
 
-    public function create()
-    {
-        return view('users.create');
-    }
+
 
     public function store(Request $request)
     {
@@ -57,14 +54,7 @@ class UserController extends Controller
     }
 
 
-    public function edit($id)
-    {
-        $data = DB::table('users')
-            ->where('id', $id);
 
-        $user = new User((array)$data);
-        return view('pages.user', compact('user'));
-    }
 
     public function update(Request $request, $id) {
 

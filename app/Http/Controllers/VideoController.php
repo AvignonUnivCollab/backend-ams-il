@@ -65,6 +65,7 @@ class VideoController extends Controller
     public function store(Request $request)
 {
     $isYouTube = $request->has('is_youtube') && $request->input('is_youtube') == 1;
+   
     // Validate the request
     $rules = [
         'title' => 'required|string|max:60',
@@ -96,10 +97,14 @@ class VideoController extends Controller
     
     $videoPath = null;
 
-    if ($isYouTube) {
+    if ($isYouTube == true) {
         // Pour une vidéo YouTube, on sauvegarde juste l'URL
         $videoPath = $request->url;
-    } else {
+        $isYouTube = '1';
+    } 
+    
+    if($isYouTube == false) {
+        $isYouTube = '0';
         if ($request->hasFile('url')) {
             $compressedVideo = $this->videoCompressionService->compress($request->file('url'));
             $videoPath = $compressedVideo->store('videos', 'public');
