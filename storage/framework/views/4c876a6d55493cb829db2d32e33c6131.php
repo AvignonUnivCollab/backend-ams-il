@@ -70,7 +70,7 @@
                                     </video>
                                 <?php else: ?> 
                                     <?php if($videoId): ?>
-                                    <iframe width="320" height="240"
+                                    <iframe width="100%" height="240"
                                         src="https://www.youtube.com/embed/<?php echo e($videoId); ?>"
                                         frameborder="0"
                                         allowfullscreen>
