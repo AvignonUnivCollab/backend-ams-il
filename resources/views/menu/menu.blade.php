@@ -25,7 +25,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('pages.playlist') }}">
+            <a class="nav-link" href="#">
                 <i class="icon-columns menu-icon"></i>
                 <span class="menu-title">Ma playlist</span>
             </a>
