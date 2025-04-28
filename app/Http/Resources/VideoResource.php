@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class VideoResource extends JsonResource
 {
@@ -21,6 +22,7 @@ class VideoResource extends JsonResource
             'is_youtube' => $this->is_youtube == 0 ? false : true,
             'video' => $this->is_youtube == 0 ? asset('storage/' . $this->url) : $this->url,
             'thumbnail' => asset('storage/' . $this->thumbnail),
+            'created_at' => $time = Carbon::parse($this->created_at)->diffInDays(Carbon::now())
         ];
     }
 }

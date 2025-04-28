@@ -88,7 +88,7 @@ class RoomController extends BaseController
             );
         }
 
-        $room = Room::with(['host', 'users', 'videos','currentVideo', 'messages.sender'])->findOrFail($roomId);
+        $room = Room::with(['host', 'users', 'videos','currentVideo', 'messages.sender', 'playlist.videos'])->findOrFail($roomId);
         return new RoomResource($room);
     }
 
@@ -157,11 +157,7 @@ class RoomController extends BaseController
 
         $room = Room::findOrFail($roomId);
         if(!$room) {
-            return $this
-                ->sendError(
-                    'room not found.',
-                    404
-                );
+            return $this->sendError('room not found.', 404);
         }
 
         if (!$user->rooms()->where('rooms.id', $roomId)->exists()) {

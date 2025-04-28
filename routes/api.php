@@ -62,7 +62,7 @@ Route::middleware(['cors'])->group(function () {
         Route::get('/playlists', [PlaylistController::class, 'index'])->middleware('throttle:5,1');
         Route::get('/playlists/{roomId}', [PlaylistController::class, 'getPlaylistByRoom'])->middleware('throttle:5,1');
         Route::post('/playlists/add-video/{roomId}', [PlaylistController::class, 'addVideoToPlaylist'])->middleware('throttle:5,1');
-        Route::post('/playlists/remove-video/{playlistVideoId}', [PlaylistController::class, 'removeVideoFromPlaylist'])->middleware('throttle:5,1');
+        Route::post('/playlists/remove-video/{roomId}', [PlaylistController::class, 'removeVideoFromPlaylist'])->middleware('throttle:5,1');
     });
 
 

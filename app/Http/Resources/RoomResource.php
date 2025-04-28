@@ -20,7 +20,7 @@ class RoomResource extends JsonResource
             'thumbnail' => asset('storage/' . $this->thumbnail),
             'current_video' => new VideoResource($this->whenLoaded('currentVideo')),
             'host' => new UserResource($this->whenLoaded('host')),
-            'playlist' => VideoResource::collection($this->whenLoaded('playlist')),
+            'playlist' => new PlaylistResource($this->whenLoaded('playlist')),
             'users' => UserResource::collection($this->whenLoaded('users')),
             'videos' => VideoResource::collection($this->whenLoaded('videos')),
             'messages' => MessageResource::collection($this->whenLoaded('messages')),

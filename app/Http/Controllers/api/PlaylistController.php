@@ -5,10 +5,12 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Playlist;
+use App\Http\Resources\PlaylistResource;
 use App\Models\PlaylistVideo;
 use App\Models\Video;
 use App\Models\Room;
 use Illuminate\Support\Facades\DB;
+use App\Events\VideoAddedToPlaylist;
 
 class PlaylistController extends BaseController
 {
@@ -22,10 +24,16 @@ class PlaylistController extends BaseController
             return $this->sendError('Unauthorised', 401);
         }
 
-        $playlist = Playlist::with(['videos'])->get();
+        $playlists = Playlist::with(['videos'])->get();
 
-        return $this->sendResponse($playlist, 'Playlists retrived succesfully');
+        $playlists->transform(function ($playlist) use ($user) {
+            $playlist->thumbnail = asset('storage/' . $playlist->thumbnail);
+        
+            $playlist->url = $playlist->is_youtube == 1 ?  $playlist->url : asset('storage/' . $playlist->url);
+            return $playlist;
+        });
 
+        return $this->sendResponse($playlists, 'Playlists retrived succesfully');
     }
 
 
@@ -73,23 +81,28 @@ class PlaylistController extends BaseController
             'order' => $maxOrder !== null ? $maxOrder + 1 : 0
         ]);
 
+        broadcast(new VideoAddedToPlaylist($roomId, $video))->toOthers();
+
         return $this->sendResponse($playlistVideo, 'Video added to playlist succesfully'); 
     }
 
 
-    public function removeVideoFromPlaylist(Request $request, $playlistVideoId)
+    public function removeVideoFromPlaylist(Request $request, $roomId)
     {
         $user = $this->authenticate($request);
         if(!$user) {
             return $this->sendError('Unauthorised', 401);
         }
 
-        $playlistVideo = PlaylistVideo::findOrFail($playlistVideoId);
-        if(!$user) {
+        $request->validate(['video_id' => 'required|exists:videos,id']);
+
+        $playlistVideo = PlaylistVideo::where('video_id', $request->video_id)->get();
+        //$playlistVideo = PlaylistVideo::findOrFail($videoId);
+        if(!$playlistVideo) {
             return $this->sendError('Playlist video not found', 404);
         }
 
-        $playlistVideo->delete();
+        $playlistVideo->each->delete();
         return $this->sendResponse([], 'Video remove from playlist');
    }
 }
