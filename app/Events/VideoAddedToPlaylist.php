@@ -34,7 +34,7 @@ class VideoAddedToPlaylist
     public function broadcastOn(): array
     {
 
-        return [new Channel('room-'.$this->roomId)];
+        return [new Channel('playlist-'.$this->roomId)];
     }
 
     public function broadcastAs(): string

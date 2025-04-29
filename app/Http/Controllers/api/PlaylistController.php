@@ -69,9 +69,7 @@ class PlaylistController extends BaseController
             return $this->sendError('Video not found', 404);
         }
 
-        $request->validate([
-            'video_id' => 'required|exists:videos,id'
-        ]);
+        $request->validate(['video_id' => 'required|exists:videos,id']);
 
         $playlist = Playlist::firstOrCreate(['room_id' => $roomId]);
         $maxOrder = PlaylistVideo::where('playlist_id', $playlist->id)->max('order');
@@ -81,7 +79,9 @@ class PlaylistController extends BaseController
             'order' => $maxOrder !== null ? $maxOrder + 1 : 0
         ]);
 
-        broadcast(new VideoAddedToPlaylist($roomId, $video))->toOthers();
+        broadcast(new VideoAddedToPlaylist($roomId, $video));
+
+        $playlistVideo->video = $video;
 
         return $this->sendResponse($playlistVideo, 'Video added to playlist succesfully'); 
     }
