@@ -6,6 +6,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PlaylistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -71,3 +72,6 @@ Route::post('/videos', [VideoController::class, 'store'])->name('videos.store');
 
 //messages
 Route::get('/messages', [MessageController::class, 'index'])->middleware('auth.custom')->name('pages.message');
+
+Route::get('/playlists', [PlaylistController::class, 'index'])->middleware('auth.custom')->name('pages.playlist');
+Route::get('/playlist/{roomId}', [PlaylistController::class, 'show'])->middleware('auth.custom')->name('playlist.room');

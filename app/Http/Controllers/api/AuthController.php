@@ -177,20 +177,28 @@ class AuthController extends BaseController
 
 
     public function changePassword(Request $request)
-    {
-        $request->validate([
-            'current_password' => 'required|email',
-            'new_password' => 'required|email'
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string|min:6',
+    ]);
 
-        $user = Auth::user();
+    $user = User::where('email', $request->email)->first();
 
-        if(!Hash::check($request->current_password, $request->new_password)) {
-            return $this->sendError('Current password does not match', [], 400);
-        }
-
-        $user->password = Hash::make($request->new_password);
-        $user->save();
-        return $this->sendResponse([], 'Password successfully changed.');
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'User not found',
+        ], 404);
     }
+
+    $user->password = bcrypt($request->password);
+    $user->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Password updated successfully',
+    ]);
+}
+
 }
