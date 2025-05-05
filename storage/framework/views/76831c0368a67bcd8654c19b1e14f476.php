@@ -1,6 +1,4 @@
-@extends('layout')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="content-wrapper">
     <div class="row">
         <div class="col-md-12 grid-margin">
@@ -25,38 +23,38 @@
 
     <!-- Cartes -->
     <div class="row mt-0">
-        @foreach ($playlistVideos as $playlistVideo)
+        <?php $__currentLoopData = $playlistVideos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $playlistVideo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="col-md-3 mt-4">
                 <div class="card clickable-card" 
                      data-bs-toggle="modal" 
-                     data-bs-target="#playlistModal-{{ $playlistVideo['room_id'] }}"
+                     data-bs-target="#playlistModal-<?php echo e($playlistVideo['room_id']); ?>"
                      style="cursor: pointer;">
                     <div class="position-relative">
                         <img 
-                            src="{{ asset('storage/' . $playlistVideo['room_thumbnail']) }}" 
+                            src="<?php echo e(asset('storage/' . $playlistVideo['room_thumbnail'])); ?>" 
                             alt="Image"
                             class="card-img-top card-img-custom"
                         >
                     </div>
                     <div class="card-body text-left">
-                        <h5 class="card-title"> {{ $playlistVideo['room_name'] }}</h5>
-                            <p> {{ $playlistVideo['video_count']}} vidéos </p>
+                        <h5 class="card-title"> <?php echo e($playlistVideo['room_name']); ?></h5>
+                            <p> <?php echo e($playlistVideo['video_count']); ?> vidéos </p>
                     </div>
                 </div>
             </div>
-        @endforeach
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
 </div>
 
 <!-- Modals dynamiques pour chaque playlist -->
-@foreach ($playlistVideos as $playlistVideo)
+<?php $__currentLoopData = $playlistVideos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $playlistVideo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-<div class="modal fade" id="playlistModal-{{ $playlistVideo['room_id'] }}" tabindex="-1"
-     aria-labelledby="playlistModalLabel-{{ $playlistVideo['room_id'] }}" aria-hidden="true">
+<div class="modal fade" id="playlistModal-<?php echo e($playlistVideo['room_id']); ?>" tabindex="-1"
+     aria-labelledby="playlistModalLabel-<?php echo e($playlistVideo['room_id']); ?>" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="playlistModalLabel-{{ $playlistVideo['room_id'] }}">
+                <h5 class="modal-title" id="playlistModalLabel-<?php echo e($playlistVideo['room_id']); ?>">
                   
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
@@ -66,28 +64,28 @@
                     <!-- Première colonne: Room Info -->
                     <div class="col-md-6">
                         <h3>Informations sur la Room</h3>
-                        <p><strong>Nom de la room :</strong> {{ $playlistVideo['room_name'] }}</p>
-                        <img width="90%" height="480" src="{{ asset('storage/' . $playlistVideo['room_thumbnail']) }}" class="img-fluid rounded mb-3" alt="Room Thumbnail"/>
-                        <p><strong>Description :</strong> {{ $playlistVideo['room_description'] }}</p>
+                        <p><strong>Nom de la room :</strong> <?php echo e($playlistVideo['room_name']); ?></p>
+                        <img width="90%" height="480" src="<?php echo e(asset('storage/' . $playlistVideo['room_thumbnail'])); ?>" class="img-fluid rounded mb-3" alt="Room Thumbnail"/>
+                        <p><strong>Description :</strong> <?php echo e($playlistVideo['room_description']); ?></p>
                     </div>
 
                     <!-- Deuxième colonne: Liste des vidéos -->
                     <div class="col-md-6">
                         <h5>Liste des vidéos</h5>
-                            @foreach ($playlistVideo['videos'] as $video)
-                                @php
+                            <?php $__currentLoopData = $playlistVideo['videos']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $video): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php
                                     $videoId = null;
                                     if (filter_var($video['video_url'], FILTER_VALIDATE_URL)) {
                                         parse_str(parse_url($video['video_url'], PHP_URL_QUERY), $query);
                                         $videoId = $query['v'] ?? null;
                                     }
-                                @endphp
+                                ?>
                                 <iframe width="25%" height="110"
-                                        src="https://www.youtube.com/embed/{{ $videoId }}"
+                                        src="https://www.youtube.com/embed/<?php echo e($videoId); ?>"
                                         frameborder="0"
                                         allowfullscreen>
                                 </iframe>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
             </div>
@@ -95,7 +93,7 @@
     </div>
 </div>
 
-@endforeach
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 <!-- Styles -->
 <style>
@@ -177,4 +175,6 @@
         height: auto;
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/webgrp04/backend-ams-il/resources/views/pages/playlist.blade.php ENDPATH**/ ?>
